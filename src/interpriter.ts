@@ -129,5 +129,5 @@ export const interpriter = (tokens: string[]) => {
   while (p < tokens.length) {
     processTokens()
   }
-  console.log(vars)
+  // console.log(vars)
 }

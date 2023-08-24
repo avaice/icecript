@@ -8,7 +8,7 @@ export const tokenize = (src: string) => {
     .filter((v) => v)
 
   for (let i = 0; i < tokens.length; i++) {
-    if (tokens[i] === '*') {
+    if (tokens[i] === '*' || tokens[i] === '/') {
       if (tokens[i - 1] !== ')') {
         tokens.splice(i - 1, 0, '(')
       } else {
@@ -21,7 +21,8 @@ export const tokenize = (src: string) => {
           if (tokens[j] === '(') {
             nest--
             if (nest === -1) {
-              tokens.splice(j - 1, 0, '(')
+              tokens.splice(j, 0, '(')
+              break
             }
           }
         }
@@ -41,6 +42,7 @@ export const tokenize = (src: string) => {
             nest--
             if (nest === -1) {
               tokens.splice(j, 0, ')')
+              break
             }
           }
         }
