@@ -7,5 +7,6 @@ export const err = (message: string) => {
 
 export const exec = (src: string) => {
   const tokens = tokenize(src)
+  console.log(tokens)
   interpriter(tokens)
 }
