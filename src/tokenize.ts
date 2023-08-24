@@ -1,5 +1,5 @@
 export const tokenize = (src: string) => {
-  const operators = /[+*\-/=()]/
+  const operators = /[+*/=()]/
   const separators = /"(.+?)"| |\n|;/
 
   const tokens = src

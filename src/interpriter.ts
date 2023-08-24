@@ -26,7 +26,7 @@ export const interpriter = (tokens: string[]) => {
       }
 
       // 四則演算か？
-      if (!options?.exprFlag && ['+', '-', '*', '/'].includes(tokens[p + 1])) {
+      if (!options?.exprFlag && ['+', '*', '/'].includes(tokens[p + 1])) {
         return arithmetic()
       }
 
@@ -81,7 +81,7 @@ export const interpriter = (tokens: string[]) => {
     }
     const result = (functions[fnStr] as any)(...args)
 
-    p++
+    // p++
 
     return result
   }
@@ -110,8 +110,6 @@ export const interpriter = (tokens: string[]) => {
     switch (ope) {
       case '+':
         return left + right
-      case '-':
-        return left - right
       case '*':
         return left * right
       case '/':
@@ -123,7 +121,7 @@ export const interpriter = (tokens: string[]) => {
     p++
     const result: any = processTokens()
     p++
-    return ['+', '-', '*', '/'].includes(tokens[p + 1]) ? arithmetic(result) : result
+    return ['+', '*', '/'].includes(tokens[p + 1]) ? arithmetic(result) : result
   }
 
   while (p < tokens.length) {
