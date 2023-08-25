@@ -1,5 +1,10 @@
+import { functions } from './functions/functions'
+import { inputForNode } from './functions/input/node'
 import { err, exec } from './tools'
 import fs from 'node:fs'
+
+// Node実装依存のfunctions
+;(functions as any)['input'] = inputForNode
 
 try {
   const args = process.argv.slice(2)

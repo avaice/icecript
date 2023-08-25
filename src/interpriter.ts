@@ -8,32 +8,32 @@ let p: number = 0
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
 const reserved = ['true', 'false', 'monkey']
 
-export const interpriter = (tokens: string[]) => {
+export const interpriter = async (tokens: string[]) => {
   vars = {}
   p = 0
 
-  const processTokens = (options?: { exprFlag?: boolean }) => {
+  const processTokens = async (options?: { exprFlag?: boolean }) => {
     while (p < tokens.length) {
       const select = tokens[p]
 
       // コマンドか？
       // eslint-disable-next-line no-prototype-builtins
       if (functions.hasOwnProperty(select)) {
-        return callFunc(select as keyof typeof functions)
+        return await callFunc(select as keyof typeof functions)
       }
 
       // 変数宣言か？
       if (select === 'var') {
-        return defineVar()
+        return await defineVar()
       }
 
       if (select === '(') {
-        return kakko()
+        return await kakko()
       }
 
       // 条件分岐か？
       if (select === 'if') {
-        return ifFunc()
+        return await ifFunc()
       }
 
       // 予約語か？
@@ -52,17 +52,17 @@ export const interpriter = (tokens: string[]) => {
 
       // 比較か？
       if (!options?.exprFlag && judgeOpe.includes(tokens[p + 1])) {
-        return judge()
+        return await judge()
       }
 
       // 四則演算か？
       if (!options?.exprFlag && ['+', '*', '/'].includes(tokens[p + 1])) {
-        return arithmetic()
+        return await arithmetic()
       }
 
       // 変数代入か？
       if (tokens[p + 1] === '=') {
-        return assignVar()
+        return await assignVar()
       }
 
       // 変数呼び出しか？
@@ -88,7 +88,7 @@ export const interpriter = (tokens: string[]) => {
     }
   }
 
-  const callFunc = (fnStr: keyof typeof functions) => {
+  const callFunc = async (fnStr: keyof typeof functions) => {
     p++
     if (tokens[p] !== '(') {
       err(`関数の始めに "(" がありません`)
@@ -100,7 +100,7 @@ export const interpriter = (tokens: string[]) => {
       if (tokens[p] === ')') {
         break
       }
-      const arg = processTokens()
+      const arg = await processTokens()
       if (arg) {
         args.push(arg)
       }
@@ -109,14 +109,14 @@ export const interpriter = (tokens: string[]) => {
     if (tokens[p] !== ')') {
       err(`関数の終わりに ")" がありません`)
     }
-    const result = (functions[fnStr] as any)(...args)
+    const result = await (functions[fnStr] as any)(...args)
 
     // p++
 
     return result
   }
 
-  const defineVar = () => {
+  const defineVar = async () => {
     p++
     if (Object.keys(vars).includes(tokens[p])) {
       err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
@@ -130,18 +130,18 @@ export const interpriter = (tokens: string[]) => {
     }
   }
 
-  const assignVar = () => {
+  const assignVar = async () => {
     p += 2
 
-    vars[tokens[p - 2]] = processTokens()
+    vars[tokens[p - 2]] = await processTokens()
     p++
   }
 
-  const arithmetic = (leftArg?: number) => {
+  const arithmetic = async (leftArg?: number) => {
     const ope = tokens[p + 1]
-    const left: any = leftArg ?? processTokens({ exprFlag: true })
+    const left: any = leftArg ?? (await processTokens({ exprFlag: true }))
     p += 2
-    const right: any = processTokens()
+    const right: any = await processTokens()
 
     switch (ope) {
       case '+':
@@ -153,19 +153,19 @@ export const interpriter = (tokens: string[]) => {
     }
   }
 
-  const kakko = () => {
+  const kakko = async () => {
     p++
-    const result: any = processTokens()
+    const result: any = await processTokens()
     p++
     return ['+', '*', '/'].includes(tokens[p + 1])
-      ? arithmetic(result)
+      ? await arithmetic(result)
       : judgeOpe.includes(tokens[p + 1])
-      ? judge(result)
+      ? await judge(result)
       : result
   }
 
-  const ifFunc = (current?: boolean) => {
-    const processer = (process: boolean) => {
+  const ifFunc = async (current?: boolean) => {
+    const processer = async (process: boolean) => {
       let nest = 0
       p += 2
       while (nest >= 0) {
@@ -175,30 +175,30 @@ export const interpriter = (tokens: string[]) => {
           nest--
         } else {
           if (process) {
-            processTokens()
+            await processTokens()
           }
         }
         p++
       }
     }
     p++
-    const result = processTokens()
+    const result = await processTokens()
     const judge = current ? false : result
 
-    processer(judge)
+    await processer(judge)
 
     if (tokens[p] === 'else') {
-      processer(current ? false : !judge)
+      await processer(current ? false : !judge)
     } else if (tokens[p] === 'elif') {
-      ifFunc(current ? true : judge)
+      await ifFunc(current ? true : judge)
     }
   }
 
-  const judge = (leftArg?: any) => {
+  const judge = async (leftArg?: any) => {
     const ope = tokens[p + 1]
-    const left: any = leftArg ?? processTokens({ exprFlag: true })
+    const left: any = leftArg ?? (await processTokens({ exprFlag: true }))
     p += 2
-    const right: any = processTokens()
+    const right: any = await processTokens()
 
     switch (ope) {
       case '==':
@@ -217,7 +217,7 @@ export const interpriter = (tokens: string[]) => {
   }
 
   while (p < tokens.length) {
-    processTokens()
+    await processTokens()
   }
   // console.log(vars)
 }

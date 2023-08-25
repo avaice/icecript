@@ -3,8 +3,10 @@ import { tokenize } from './tokenize'
 
 let tokens: string[]
 
+export const enviroment = typeof window === 'undefined' ? 'node' : 'browser'
+
 export const err = (message: string) => {
-  if (typeof window !== 'undefined') {
+  if (enviroment === 'browser') {
     const p = getPointer()
     const pos = tokens.slice(Math.max(0, p - 5), p + 5).join(' ')
     alert(
@@ -18,8 +20,8 @@ export const err = (message: string) => {
   }
 }
 
-export const exec = (src: string) => {
+export const exec = async (src: string) => {
   tokens = tokenize(src)
   console.log(tokens)
-  interpriter(tokens)
+  await interpriter(tokens)
 }
