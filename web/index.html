@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>playground</title>
+    <link rel="stylesheet" href="./the-new-css-reset.css" />
+    <link href="ace/ace.css" rel="stylesheet" />
+
+    <style>
+      body {
+        margin: 0;
+      }
+      main {
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 10px;
+      }
+      textarea {
+        width: 100%;
+      }
+      button,
+      #help {
+        text-align: center;
+        cursor: pointer;
+        background-color: rgb(230, 230, 230);
+        border-radius: 10px;
+      }
+      button:hover,
+      a:hover {
+        opacity: 0.8;
+      }
+      p {
+        font-size: 18px;
+        line-height: 2em;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        height: 50px;
+        box-shadow: 0px 2px 4px gray;
+        padding: 0 10px;
+      }
+      header .container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      header h1 {
+        font-size: 18px;
+        line-height: 50px;
+      }
+      header .controls {
+        height: calc(100% - 10px);
+        margin: 5px;
+      }
+      header .controls button {
+        height: 40px;
+        width: 70px;
+      }
+      #help {
+        display: inline-block;
+        line-height: 40px;
+        width: 40px;
+        height: 40px;
+      }
+
+      main {
+        margin-top: 20px;
+      }
+
+      #editor {
+        font-size: 15px;
+        border-radius: 10px;
+        height: 300px;
+      }
+
+      #result {
+        background-color: rgb(230, 230, 230);
+        border-radius: 10px;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>playground</h1>
+        <div class="controls">
+          <button onclick="run()">Run</button>
+          <button onclick="run()">Share</button>
+          <a href="manual/index.html" id="help" target="_blank" noreferer>?</a>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div id="editor">print("Hello, World!")</div>
+
+      <p>出力</p>
+      <textarea rows="10" id="result" disabled></textarea>
+    </main>
+
+    <script src="ace/ace.js"></script>
+    <script src="ace/ext-language_tools.js"></script>
+    <script src="../dist/bundle.js"></script>
+    <script>
+      const editor = ace.edit('editor')
+      ace.require('ace/mode/icecript')
+      ace.require('ace/ext/language_tools')
+      editor.setTheme('ace/theme/monokai')
+      editor.session.setMode('ace/mode/icecript')
+      editor.setShowPrintMargin(false)
+      editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true,
+      })
+
+      window.onload = () => {
+        if (!icecript) {
+          alert('icecriptのロードに失敗しました！\n~/dist/bundle.jsは存在しますか？')
+        }
+      }
+      const nativeConsoleLog = console.log
+      console.log = (...messages) => {
+        // nativeConsoleLog(messages)
+        let output = ''
+        output = output + messages.join(' ') + '\n'
+        window.result.value = output
+      }
+      function run() {
+        window.result.value = ''
+        icecript(editor.getValue())
+      }
+    </script>
+  </body>
+</html>

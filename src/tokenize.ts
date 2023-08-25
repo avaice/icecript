@@ -1,6 +1,6 @@
 export const tokenize = (src: string) => {
-  const operators = /[+*/=()]/
-  const separators = /".[^"]*"| |\n|;|\/\/.*\n/
+  const operators = /==|&&|\|\||!=|[<>+*/=()]/
+  const separators = /".[^"]*"| |\n|;|\/\/.*\n|{|}/
 
   const tokens = src
     .split(new RegExp(`(${separators.source}|${operators.source})`))
@@ -8,7 +8,7 @@ export const tokenize = (src: string) => {
     .filter((v) => v)
 
   for (let i = 0; i < tokens.length; i++) {
-    if (tokens[i] === '*' || tokens[i] === '/') {
+    if (['*', '/', '==', '!=', '<', '>'].includes(tokens[i])) {
       if (tokens[i - 1] !== ')') {
         tokens.splice(i - 1, 0, '(')
       } else {

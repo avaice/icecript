@@ -1,5 +1,22 @@
 var weather = "晴れ"
+var temprature = 30
+var user = "おじいちゃん"
 
-if (weather == "晴れ"){
+var a = true
+
+if(a){
+    print("やあ")
+}
+
+if((temprature > 29 && weather == "晴れ") || (temprature > 25 && user == "おじいちゃん")){
+    print("今日は猛暑だ！")
+}
+elif (weather == "晴れ"){
     print("おめでとうございます！本日は晴天です！")
+}
+elif(weather == "曇り"){
+    print("曇りです。悲しいね")
+}
+else{
+    print("謎の天気です")
 }
