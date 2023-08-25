@@ -2,6 +2,10 @@ var a = 100
 var b = 2
 var c = 30
 var d = 5
+
+// 引き算はopと数値をくっつける
+print(a + b * c / d + -12 + 1)
+
+
 var rand = random(300)
 print(rand)
-print(a + b * c / d + -12 + 1)

@@ -1,9 +1,9 @@
 export const tokenize = (src: string) => {
   const operators = /[+*/=()]/
-  const separators = /"(.+?)"| |\n|;/
+  const separators = /".[^"]*"| |\n|;|\/\/.*\n/
 
   const tokens = src
-    .split(new RegExp(`(${operators.source}|${separators.source})`))
+    .split(new RegExp(`(${separators.source}|${operators.source})`))
     .map((v) => v?.trim())
     .filter((v) => v)
 

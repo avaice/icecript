@@ -50,7 +50,7 @@ export const interpriter = (tokens: string[]) => {
         return Number(select)
       }
 
-      if (![',', '(', ')', ';'].includes(select)) {
+      if (![',', '(', ')', ';'].includes(select) && !select.startsWith('//')) {
         return err(`${select}は定義されていない命令です！`)
       }
 
@@ -92,6 +92,9 @@ export const interpriter = (tokens: string[]) => {
       err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
     }
     vars[tokens[p]] = undefined
+    if (tokens[p + 1] !== '=') {
+      p++
+    }
   }
 
   const assignVar = () => {

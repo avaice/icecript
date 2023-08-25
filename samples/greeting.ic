@@ -1,1 +1,3 @@
-print("icecriptへようこそ！")
+var name
+name = "AVAICE"
+print("Hello, " + name)
