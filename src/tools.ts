@@ -4,7 +4,7 @@ import { tokenize } from './tokenize'
 let tokens: string[]
 
 export const err = (message: string) => {
-  if (window) {
+  if (typeof window !== 'undefined') {
     const p = getPointer()
     const pos = tokens.slice(Math.max(0, p - 5), p + 5).join(' ')
     alert(
@@ -20,5 +20,6 @@ export const err = (message: string) => {
 
 export const exec = (src: string) => {
   tokens = tokenize(src)
+  console.log(tokens)
   interpriter(tokens)
 }

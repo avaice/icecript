@@ -1,6 +1,6 @@
 export const tokenize = (src: string) => {
   const operators = /==|&&|\|\||!=|[<>+*/=()]/
-  const separators = /".[^"]*"| |\n|;|\/\/.*\n|{|}/
+  const separators = /""|".[^"]*"| |\n|;|\/\/.*\n|{|}/
 
   const tokens = src
     .split(new RegExp(`(${separators.source}|${operators.source})`))
