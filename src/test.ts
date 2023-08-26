@@ -14,6 +14,10 @@ export const test = async () => {
       if (path.extname(file) === '.ic') {
         const filePath = path.join(directoryPath, file)
         const data = fs.readFileSync(filePath, 'utf8')
+
+        if (data.startsWith('// NO_TEST' || '//NO_TEST')) {
+          continue
+        }
         const assertionPath = filePath + '.txt'
         const assertion = fs.existsSync(assertionPath)
           ? fs.readFileSync(assertionPath, 'utf8')
