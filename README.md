@@ -3,6 +3,11 @@
 
 ## usage
 
+### ブラウザで試す
+https://avaice.github.io/icecript
+
+### Node.jsで動かす
+
 `git clone https://github.com/avaice/icecript.git`
 
 `npm ci`
