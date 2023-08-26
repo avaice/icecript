@@ -1,5 +1,5 @@
 var weather = "晴れ"
-var temprature = 3
+var temprature = 30
 var user = "おじいちゃん"
 
 var a = true
