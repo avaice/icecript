@@ -19,4 +19,6 @@ jobs:
       - name: Install packages
         run: npm ci
       - name: Show coverage
+        env:
+          TZ: 'Asia/Tokyo'
         run: npm run test
