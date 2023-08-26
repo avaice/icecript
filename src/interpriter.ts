@@ -182,11 +182,11 @@ export const interpriter = async (tokens: string[]) => {
     const result = await processTokens()
     const judge = current ? false : result
     p++
-    await processer(judge)
+    await processor(judge)
 
     if (tokens[p] === 'else') {
       p++
-      await processer(current ? false : !judge)
+      await processor(current ? false : !judge)
     } else if (tokens[p] === 'elif') {
       await ifFunc(current ? true : judge)
     }
@@ -198,7 +198,7 @@ export const interpriter = async (tokens: string[]) => {
     const result = await processTokens()
     const judge = !!result
     p++
-    await processer(judge)
+    await processor(judge)
 
     if (judge) {
       p = startPointer
@@ -229,7 +229,7 @@ export const interpriter = async (tokens: string[]) => {
 
   // 括弧の中を処理するやつ。
   //（process === falseだと処理しないでポインタだけ動かしてくれる）
-  const processer = async (process: boolean) => {
+  const processor = async (process: boolean) => {
     let nest = 0
 
     // eslint-disable-next-line no-constant-condition
