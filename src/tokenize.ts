@@ -5,7 +5,7 @@ export const tokenize = (src: string) => {
   const tokens = src
     .split(new RegExp(`(${separators.source}|${operators.source})`))
     .map((v) => v?.trim())
-    .filter((v) => v)
+    .filter((v) => v && !v.startsWith('//'))
 
   for (let i = 0; i < tokens.length; i++) {
     if (['*', '/', '==', '!=', '<', '>'].includes(tokens[i])) {
@@ -21,7 +21,13 @@ export const tokenize = (src: string) => {
           if (tokens[j] === '(') {
             nest--
             if (nest === -1) {
-              tokens.splice(j, 0, '(')
+              if (tokens[j - 1].match(/^[a-zA-Z0-9]+$/)) {
+                if (!['if', 'elif', 'for', 'while'].includes(tokens[j - 1]))
+                  tokens.splice(j - 1, 0, '(')
+              } else {
+                tokens.splice(j, 0, '(')
+              }
+
               break
             }
           }

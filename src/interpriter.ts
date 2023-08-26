@@ -114,14 +114,18 @@ export const interpriter = async (tokens: string[]) => {
       if (arg !== undefined) {
         args.push(arg)
       }
+
       p++
     }
     if (tokens[p] !== ')') {
       err(`関数の終わりに ")" がありません`)
     }
     const result = await (functions[fnStr] as any)(...args)
-
-    return result
+    return ['+', '*', '/'].includes(tokens[p + 1])
+      ? await arithmetic(result)
+      : judgeOpe.includes(tokens[p + 1])
+      ? await judge(result)
+      : result
   }
 
   const defineVar = async () => {
@@ -207,7 +211,6 @@ export const interpriter = async (tokens: string[]) => {
     const left: any = leftArg ?? (await processTokens({ exprFlag: true }))
     p += 2
     const right: any = await processTokens()
-
     switch (ope) {
       case '==':
         return left == right
