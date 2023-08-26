@@ -85,6 +85,11 @@ export const interpriter = async (tokens: string[]) => {
         return Number(select)
       }
 
+      // ポインター移動バグのせいで必要
+      if (select === '}') {
+        return
+      }
+
       if (![',', '(', ')', ';'].includes(select) && !select.startsWith('//')) {
         return err(`${select}は定義されていない命令です！`)
       }
@@ -225,10 +230,6 @@ export const interpriter = async (tokens: string[]) => {
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (30 < p) {
-        err('out of range!')
-      }
-
       if (tokens[p] === '{') {
         nest++
       } else if (tokens[p] === '}') {
@@ -253,5 +254,5 @@ export const interpriter = async (tokens: string[]) => {
   while (p < tokens.length) {
     await processTokens()
   }
-  console.log(vars)
+  // console.log(vars)
 }
