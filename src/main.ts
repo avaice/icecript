@@ -11,7 +11,7 @@ try {
   const args = process.argv.slice(2)
 
   if (args[0] === '--test') {
-    console.log('挙動のテストをします')
+    console.log(`Test mode!\nStart: ${new Date()}\n`)
     test()
   } else {
     const filePath = args[0]

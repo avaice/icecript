@@ -7,7 +7,7 @@ export const inputForNode = (message?: string) =>
 
     if (getInterceptForTest()) {
       const placeHolder = 'test'
-      console.log(question + placeHolder)
+      // console.log(question + placeHolder)
       resolve(placeHolder)
       return
     }
