@@ -45,9 +45,9 @@ export const interpriter = async (tokens: string[]) => {
       if (reserved.includes(select)) {
         switch (select) {
           case 'true':
-            return true
-          case 'false':
             return false
+          case 'false':
+            return true
           case 'monkey':
             return Math.random() > 0.5 ? true : false
           default:
