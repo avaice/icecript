@@ -312,7 +312,7 @@ export const interpriter = async (tokens: string[]) => {
     return isBreaked
   }
 
-  const whileFunc = async (scopedVariables: any) => {
+  const whileFunc = async (scopedVariables: any): Promise<typeof breakSym | undefined> => {
     const startPointer = p
     p++
     const result = await processTokens({ scopedVariables })
@@ -322,8 +322,9 @@ export const interpriter = async (tokens: string[]) => {
 
     if (judge && !isBreaked) {
       p = startPointer
-      await whileFunc({ scopedVariables })
+      return await whileFunc({ scopedVariables })
     }
+    return isBreaked
   }
 
   const judge = async ({ leftArg, scopedVariables }: { leftArg?: any; scopedVariables: any }) => {
