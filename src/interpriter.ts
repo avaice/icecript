@@ -397,5 +397,5 @@ export const interpriter = async (tokens: string[]) => {
   while (p < tokens.length) {
     await processTokens({ scopedVariables: undefined })
   }
-  console.log(vars)
+  // console.log(vars)
 }
