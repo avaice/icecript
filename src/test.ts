@@ -40,9 +40,10 @@ export const test = async () => {
           if (trimmedResult === assertion) {
             console.log('\x1b[32mOK\x1b[0m\n')
           } else {
-            return console.error(
+            console.error(
               `\n\x1b[31m期待された結果と違う出力でした\n期待値:\n${assertion}\n結果:\n${trimmedResult}\x1b[0m\n`
             )
+            process.exit(1)
           }
         }
 

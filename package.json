@@ -1,6 +1,6 @@
 {
   "name": "icecript",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "avaice's great language",
   "main": "src/main.ts",
   "scripts": {
