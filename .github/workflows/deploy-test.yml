@@ -1,0 +1,24 @@
+# 言語実装はNode.js上で行うので、無意識にnode依存のモジュールを使ってしまう可能性がある。
+# PRでそれが起こらないことを保証するためにテストする
+name: Test deploy for web
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+
+jobs:
+  Test:
+    name: Run test codes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install and cache nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: Install packages
+        run: npm ci
+      - name: build bundle
+        run: npm run build:bundle
