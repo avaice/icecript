@@ -37,9 +37,9 @@ export const interpriter = async (tokens: string[]) => {
       }
 
       // Whileか？
-      // if (select === 'while') {
-      //   return await whileFunc()
-      // }
+      if (select === 'while') {
+        return await whileFunc()
+      }
 
       // 予約語か？
       if (reserved.includes(select)) {
@@ -199,35 +199,49 @@ export const interpriter = async (tokens: string[]) => {
     }
   }
 
-  // const whileFunc = async () => {
-  //   const processer = async (process: boolean) => {
-  //     let nest = 0
-  //     p += 2
-  //     while (nest >= 0) {
-  //       if (tokens[p] === '{') {
-  //         nest++
-  //       } else if (tokens[p] === '}') {
-  //         nest--
-  //       } else {
-  //         if (process) {
-  //           await processTokens()
-  //         }
-  //       }
-  //       p++
-  //     }
-  //   }
-  //   p++
-  //   const startPointer = p
-  //   const result = await processTokens()
-  //   const judge = result
+  const whileFunc = async () => {
+    const processer = async (process: boolean) => {
+      let nest = 0
 
-  //   await processer(judge)
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        if (30 < p) {
+          err('out of range!')
+        }
 
-  //   if (judge) {
-  //     p = startPointer
-  //     whileFunc()
-  //   }
-  // }
+        if (tokens[p] === '{') {
+          nest++
+        } else if (tokens[p] === '}') {
+          nest--
+          if (nest === 0) {
+            break
+          }
+        } else {
+          if (process) {
+            await processTokens()
+            // processTokens() の先ですでにポインタを動かしているので、
+            // 下のp++と合わせると二重になってしまう
+            p--
+          }
+        }
+        p++
+      }
+      p++
+      return
+    }
+
+    const startPointer = p
+    p++
+    const result = await processTokens()
+    const judge = !!result
+    p++
+    await processer(judge)
+
+    if (judge) {
+      p = startPointer
+      await whileFunc()
+    }
+  }
 
   const judge = async (leftArg?: any) => {
     const ope = tokens[p + 1]
