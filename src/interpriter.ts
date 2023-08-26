@@ -105,7 +105,7 @@ export const interpriter = async (tokens: string[]) => {
       }
 
       // ただの文字か？
-      if (select.match(/".*"/)) {
+      if (select.match(/".*"/) || select.match(/`([^`]+)`/)) {
         return select.slice(1, select.length - 1)
       }
 

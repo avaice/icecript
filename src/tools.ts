@@ -34,6 +34,8 @@ export const err = (message: string) => {
 export const exec = async (src: string) => {
   tokens = tokenize(src)
 
+  // console.log(tokens)
+
   // tokens.forEach((v, i) => {
   //   console.log(i, v)
   // })
