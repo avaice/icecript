@@ -4,7 +4,7 @@
   "description": "avaice's great language",
   "main": "src/main.ts",
   "scripts": {
-    "test": "jest",
+    "test": "ts-node src/main.ts --test",
     "start": "ts-node src/main.ts",
     "build:bundle": "webpack"
   },

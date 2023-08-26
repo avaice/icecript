@@ -1,4 +1,10 @@
+import { getInterceptForTest, printInterceptor } from '../../test'
+
 export const print = (msg?: any, ...optionalMsg: any[]) => {
-  console.log(msg, ...optionalMsg)
+  if (getInterceptForTest()) {
+    printInterceptor(msg, ...optionalMsg)
+  } else {
+    console.log(msg, ...optionalMsg)
+  }
   return
 }

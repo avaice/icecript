@@ -22,6 +22,6 @@ export const err = (message: string) => {
 
 export const exec = async (src: string) => {
   tokens = tokenize(src)
-  console.log(tokens)
+  // console.log(tokens)
   await interpriter(tokens)
 }

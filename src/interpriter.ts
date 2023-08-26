@@ -2,8 +2,8 @@ import { functions } from './functions/functions'
 import { err } from './tools'
 
 let vars: any = {}
-export const getPointer = () => p
 let p: number = 0
+export const getPointer = () => p
 
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
 const reserved = ['true', 'false', 'monkey']
@@ -116,8 +116,6 @@ export const interpriter = async (tokens: string[]) => {
     }
     const result = await (functions[fnStr] as any)(...args)
 
-    // p++
-
     return result
   }
 
@@ -136,9 +134,10 @@ export const interpriter = async (tokens: string[]) => {
   }
 
   const assignVar = async () => {
+    const varPoint = p
     p += 2
     const result = await processTokens()
-    vars[tokens[p - 2]] = result
+    vars[tokens[varPoint]] = result
     p++
   }
 
@@ -170,26 +169,10 @@ export const interpriter = async (tokens: string[]) => {
   }
 
   const ifFunc = async (current?: boolean) => {
-    const processer = async (process: boolean) => {
-      let nest = 0
-      p += 2
-      while (nest >= 0) {
-        if (tokens[p] === '{') {
-          nest++
-        } else if (tokens[p] === '}') {
-          nest--
-        } else {
-          if (process) {
-            await processTokens()
-          }
-        }
-        p++
-      }
-    }
     p++
     const result = await processTokens()
     const judge = current ? false : result
-
+    p++
     await processer(judge)
 
     if (tokens[p] === 'else') {
@@ -200,36 +183,6 @@ export const interpriter = async (tokens: string[]) => {
   }
 
   const whileFunc = async () => {
-    const processer = async (process: boolean) => {
-      let nest = 0
-
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        if (30 < p) {
-          err('out of range!')
-        }
-
-        if (tokens[p] === '{') {
-          nest++
-        } else if (tokens[p] === '}') {
-          nest--
-          if (nest === 0) {
-            break
-          }
-        } else {
-          if (process) {
-            await processTokens()
-            // processTokens() の先ですでにポインタを動かしているので、
-            // 下のp++と合わせると二重になってしまう
-            p--
-          }
-        }
-        p++
-      }
-      p++
-      return
-    }
-
     const startPointer = p
     p++
     const result = await processTokens()
@@ -265,8 +218,40 @@ export const interpriter = async (tokens: string[]) => {
     }
   }
 
+  // 括弧の中を処理するやつ。
+  //（process === falseだと処理しないでポインタだけ動かしてくれる）
+  const processer = async (process: boolean) => {
+    let nest = 0
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      if (30 < p) {
+        err('out of range!')
+      }
+
+      if (tokens[p] === '{') {
+        nest++
+      } else if (tokens[p] === '}') {
+        nest--
+        if (nest === 0) {
+          break
+        }
+      } else {
+        if (process) {
+          await processTokens()
+          // processTokens() の先ですでにポインタを動かしているので、
+          // 下のp++と合わせると二重になってしまう
+          p--
+        }
+      }
+      p++
+    }
+    p++
+    return
+  }
+
   while (p < tokens.length) {
     await processTokens()
   }
-  // console.log(vars)
+  console.log(vars)
 }
