@@ -181,6 +181,7 @@ export const interpriter = async (tokens: string[]) => {
     await processer(judge)
 
     if (tokens[p] === 'else') {
+      p++
       await processer(current ? false : !judge)
     } else if (tokens[p] === 'elif') {
       await ifFunc(current ? true : judge)
