@@ -1,0 +1,16 @@
+// NO_TEST
+var VARIABLE = "グローバル"
+
+fn a(msg){
+    var VARIABLE = "ローカル"
+    print(msg)
+    print(VARIABLE)
+}
+
+var select = 0
+
+if(select == 0){
+    a("おーい")
+}
+
+print(VARIABLE)

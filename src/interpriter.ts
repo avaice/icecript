@@ -2,43 +2,65 @@ import { functions } from './functions/functions'
 import { err } from './tools'
 
 let vars: any = {}
+let scopedVars: any = {}
 let p: number = 0
 export const getPointer = () => p
 
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
-const reserved = ['true', 'false', 'monkey']
+const reserved = ['true', 'false', 'monkey', 'void']
+
+const breakSym = Symbol('break')
+
+type returnObjType = { sym: typeof breakSym; value: any }
 
 export const interpriter = async (tokens: string[]) => {
   vars = {}
+  scopedVars = {}
   p = 0
 
-  const processTokens = async (options?: { exprFlag?: boolean }) => {
+  const processTokens = async (options: {
+    exprFlag?: boolean
+    scopedVariables: any
+  }): Promise<any> => {
     while (p < tokens.length) {
       const select = tokens[p]
 
       // コマンドか？
       // eslint-disable-next-line no-prototype-builtins
       if (functions.hasOwnProperty(select)) {
-        return await callFunc(select as keyof typeof functions)
+        return await callInternalFunc(select as keyof typeof functions, options.scopedVariables)
+      }
+
+      // 関数呼び出しか？
+      if (vars[select]?.type === 'function') {
+        return await callFunc()
       }
 
       // 変数宣言か？
       if (select === 'var') {
-        return await defineVar()
+        return await defineVar(options.scopedVariables)
       }
 
       if (select === '(') {
-        return await kakko()
+        return await kakko(options.scopedVariables)
       }
 
       // 条件分岐か？
       if (select === 'if') {
-        return await ifFunc()
+        return await ifFunc({ scopedVariables: options.scopedVariables })
+      }
+
+      // 関数宣言か？
+      if (select === 'fn') {
+        if (options.scopedVariables) {
+          err('関数内で関数を宣言することはできません！')
+        }
+        return await defineFn()
       }
 
       // Whileか？
       if (select === 'while') {
-        return await whileFunc()
+        return await whileFunc({ scopedVariables: options.scopedVariables })
       }
 
       // 予約語か？
@@ -57,17 +79,24 @@ export const interpriter = async (tokens: string[]) => {
 
       // 比較か？
       if (!options?.exprFlag && judgeOpe.includes(tokens[p + 1])) {
-        return await judge()
+        return await judge({ scopedVariables: options.scopedVariables })
       }
 
       // 四則演算か？
       if (!options?.exprFlag && ['+', '*', '/'].includes(tokens[p + 1])) {
-        return await arithmetic()
+        return await arithmetic({ scopedVariables: options.scopedVariables })
       }
 
       // 変数代入か？
       if (tokens[p + 1] === '=') {
-        return await assignVar()
+        return await assignVar(options.scopedVariables)
+      }
+
+      // ローカル変数呼び出しか？
+      if (options.scopedVariables) {
+        if (Object.keys(options.scopedVariables).includes(tokens[p])) {
+          return options.scopedVariables[tokens[p]]
+        }
       }
 
       // 変数呼び出しか？
@@ -90,7 +119,22 @@ export const interpriter = async (tokens: string[]) => {
         return
       }
 
-      if (![',', '(', ')', ';'].includes(select) && !select.startsWith('//')) {
+      // ブレークコマンドか？
+      if (select === 'return') {
+        if (tokens[p + 1] === 'void') {
+          return {
+            sym: breakSym,
+            value: undefined,
+          }
+        }
+        p++
+        return {
+          sym: breakSym,
+          value: await processTokens({ scopedVariables: options.scopedVariables }),
+        }
+      }
+
+      if (![',', '(', ')', ';', 'void'].includes(select) && !select.startsWith('//')) {
         return err(`${select}は定義されていない命令です！`)
       }
 
@@ -98,7 +142,7 @@ export const interpriter = async (tokens: string[]) => {
     }
   }
 
-  const callFunc = async (fnStr: keyof typeof functions) => {
+  const callInternalFunc = async (fnStr: keyof typeof functions, scopedVariables: any) => {
     p++
     if (tokens[p] !== '(') {
       err(`関数の始めに "(" がありません`)
@@ -110,7 +154,7 @@ export const interpriter = async (tokens: string[]) => {
       if (tokens[p] === ')') {
         break
       }
-      const arg = await processTokens()
+      const arg = await processTokens({ scopedVariables })
       if (arg !== undefined) {
         args.push(arg)
       }
@@ -122,39 +166,121 @@ export const interpriter = async (tokens: string[]) => {
     }
     const result = await (functions[fnStr] as any)(...args)
     return ['+', '*', '/'].includes(tokens[p + 1])
-      ? await arithmetic(result)
+      ? await arithmetic({ leftArg: result, scopedVariables })
       : judgeOpe.includes(tokens[p + 1])
-      ? await judge(result)
+      ? await judge({ leftArg: result, scopedVariables })
       : result
   }
 
-  const defineVar = async () => {
+  const defineVar = async (scopedVariables?: any) => {
     p++
-    if (Object.keys(vars).includes(tokens[p])) {
-      err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
-    }
     if (reserved.includes(tokens[p])) {
       err(`"${tokens[p]}" はシステムの予約語なので、変数には使えません`)
     }
-    vars[tokens[p]] = undefined
+
+    if (scopedVariables) {
+      if (Object.keys(scopedVariables).includes(tokens[p])) {
+        err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
+      }
+      scopedVariables[tokens[p]] = undefined
+    } else {
+      if (Object.keys(vars).includes(tokens[p])) {
+        err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
+      }
+
+      vars[tokens[p]] = undefined
+    }
+
     if (tokens[p + 1] !== '=') {
       p++
     }
   }
 
-  const assignVar = async () => {
+  const defineFn = async () => {
+    p++
+    // eslint-disable-next-line no-prototype-builtins
+    if (Object.keys(vars).includes(tokens[p]) || functions.hasOwnProperty(tokens[p])) {
+      err(`宣言済みの変数 "${tokens[p]}" を再宣言することはできません`)
+    }
+    if (reserved.includes(tokens[p])) {
+      err(`"${tokens[p]}" はシステムの予約語なので、変数には使えません`)
+    }
+
+    const fnName = tokens[p]
+    vars[fnName] = { type: 'function', args: [], pointer: null }
+
+    p++
+    if (tokens[p] !== '(') {
+      err('関数の引数宣言がありません')
+    }
+    p++
+    while (tokens[p] !== ')') {
+      if (tokens[p] !== ',') {
+        vars[fnName].args.push(tokens[p])
+      }
+      p++
+    }
+    p++
+    vars[fnName].pointer = p
+    processor(false, undefined)
+
+    return
+  }
+
+  const callFunc = async () => {
+    const fnName = tokens[p]
+    const sym = Symbol(fnName)
+    scopedVars[sym] = {}
+    const scoped = scopedVars[sym]
+    p++
+    if (tokens[p] !== '(') {
+      err('関数の引数宣言がありません')
+    }
+    let i = 0
+    p++
+    while (tokens[p] !== ')') {
+      if (tokens[p] !== ',') {
+        scoped[vars[fnName].args[i]] = await processTokens({ scopedVariables: undefined })
+        i++
+      }
+
+      p++
+    }
+
+    const from = p
+    p = vars[fnName].pointer
+    const result = await processor(true, scoped)
+    p = from
+    // 関数が終わる前にローカル変数を削除する
+    delete scopedVars[sym]
+
+    return result?.value
+  }
+
+  const assignVar = async (scopedVariables: any) => {
     const varPoint = p
     p += 2
-    const result = await processTokens()
-    vars[tokens[varPoint]] = result
+    const result = await processTokens({ scopedVariables })
+    if (scopedVariables && Object.keys(scopedVariables).includes(tokens[varPoint])) {
+      scopedVariables[tokens[varPoint]] = result
+    } else {
+      vars[tokens[varPoint]] = result
+    }
+
     p++
   }
 
-  const arithmetic = async (leftArg?: number) => {
+  const arithmetic = async ({
+    leftArg,
+    scopedVariables,
+  }: {
+    leftArg?: number
+    scopedVariables: any
+  }) => {
     const ope = tokens[p + 1]
-    const left: any = leftArg ?? (await processTokens({ exprFlag: true }))
+    const left: any = leftArg ?? (await processTokens({ exprFlag: true, scopedVariables }))
     p += 2
-    const right: any = await processTokens()
+    const right: any = await processTokens({ scopedVariables })
 
     switch (ope) {
       case '+':
@@ -166,51 +292,60 @@ export const interpriter = async (tokens: string[]) => {
     }
   }
 
-  const kakko = async () => {
+  const kakko = async (scopedVariables: any) => {
     p++
-    const result: any = await processTokens()
+    const result: any = await processTokens({ scopedVariables })
     p++
     return ['+', '*', '/'].includes(tokens[p + 1])
-      ? await arithmetic(result)
+      ? await arithmetic({ leftArg: result, scopedVariables })
       : judgeOpe.includes(tokens[p + 1])
-      ? await judge(result)
+      ? await judge({ leftArg: result, scopedVariables })
       : result
   }
 
-  const ifFunc = async (current?: boolean) => {
+  const ifFunc = async ({
+    current,
+    scopedVariables,
+  }: {
+    current?: boolean
+    scopedVariables: any
+  }): Promise<{ sym: typeof breakSym } | undefined> => {
     p++
-    const result = await processTokens()
+    const result = await processTokens({ scopedVariables })
     const judge = current ? false : result
     p++
-    await processor(judge)
+    const isReturned = await processor(judge, scopedVariables)
 
     if (tokens[p] === 'else') {
       p++
-      await processor(current ? false : !judge)
+      return await processor(current ? false : !judge, scopedVariables)
     } else if (tokens[p] === 'elif') {
-      await ifFunc(current ? true : judge)
+      return await ifFunc({ current: current ? true : judge, scopedVariables })
     }
+
+    return isReturned
   }
 
-  const whileFunc = async () => {
+  const whileFunc = async (scopedVariables: any): Promise<returnObjType | undefined> => {
     const startPointer = p
     p++
-    const result = await processTokens()
+    const result = await processTokens({ scopedVariables })
     const judge = !!result
     p++
-    await processor(judge)
+    const isReturned = await processor(judge, scopedVariables)
 
-    if (judge) {
+    if (judge && !isReturned) {
       p = startPointer
-      await whileFunc()
+      return await whileFunc({ scopedVariables })
     }
+    return isReturned
   }
 
-  const judge = async (leftArg?: any) => {
+  const judge = async ({ leftArg, scopedVariables }: { leftArg?: any; scopedVariables: any }) => {
     const ope = tokens[p + 1]
-    const left: any = leftArg ?? (await processTokens({ exprFlag: true }))
+    const left: any = leftArg ?? (await processTokens({ exprFlag: true, scopedVariables }))
     p += 2
-    const right: any = await processTokens()
+    const right: any = await processTokens({ scopedVariables })
     switch (ope) {
       case '==':
         return left == right
@@ -229,11 +364,12 @@ export const interpriter = async (tokens: string[]) => {
 
   // 括弧の中を処理するやつ。
   //（process === falseだと処理しないでポインタだけ動かしてくれる）
-  const processor = async (process: boolean) => {
+  const processor = async (process: boolean, scopedVariables: any) => {
     let nest = 0
+    let returned = undefined
 
     // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (p < tokens.length) {
       if (tokens[p] === '{') {
         nest++
       } else if (tokens[p] === '}') {
@@ -242,8 +378,11 @@ export const interpriter = async (tokens: string[]) => {
           break
         }
       } else {
-        if (process) {
-          await processTokens()
+        if (process && !returned) {
+          const result = await processTokens({ scopedVariables })
+          if (result?.sym === breakSym) {
+            returned = result as returnObjType
+          }
           // processTokens() の先ですでにポインタを動かしているので、
           // 下のp++と合わせると二重になってしまう
           p--
@@ -252,11 +391,11 @@ export const interpriter = async (tokens: string[]) => {
       p++
     }
     p++
-    return
+    return returned
   }
 
   while (p < tokens.length) {
-    await processTokens()
+    await processTokens({ scopedVariables: undefined })
   }
-  // console.log(vars)
+  console.log(vars)
 }
