@@ -31,6 +31,10 @@
       a:hover {
         opacity: 0.8;
       }
+      button:disabled {
+        opacity: 0.5;
+        cursor: initial;
+      }
       p {
         font-size: 18px;
         line-height: 2em;
@@ -43,6 +47,8 @@
         height: 50px;
         box-shadow: 0px 2px 4px gray;
         padding: 0 10px;
+        z-index: 100;
+        background-color: white;
       }
       header .container {
         display: flex;
@@ -93,7 +99,7 @@
         <h1>playground</h1>
         <div class="controls">
           <button onclick="run()">Run</button>
-          <button onclick="run()">Share</button>
+          <button disabled>Share</button>
           <a href="manual/index.html" id="help" target="_blank" noreferer>?</a>
         </div>
       </div>

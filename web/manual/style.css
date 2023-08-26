@@ -20,8 +20,12 @@ main {
 
 pre {
   font-size: 15px;
-  padding: 10px;
+  padding: 5px 20px;
   border-radius: 10px;
   background-color: black;
   color: white;
+}
+.result {
+  color: black;
+  background-color: rgb(230, 230, 230);
 }
