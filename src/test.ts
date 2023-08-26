@@ -1,15 +1,7 @@
 import fs from 'fs'
 import path from 'path'
-import { exec } from './tools'
+import { clearInterceptResult, exec, getInterceptResult, setInterceptForTest } from './tools'
 
-let result = ''
-let interceptForTest = false
-export const getInterceptForTest = () => interceptForTest
-export const setInterceptForTest = (flag: boolean) => (interceptForTest = flag)
-export const printInterceptor = (msg?: any, ...optionalMsg: any[]) => {
-  result = result + [msg, ...optionalMsg].join(' ') + '\n'
-  return
-}
 export const test = async () => {
   // 出力を迎撃する
   setInterceptForTest(true)
@@ -34,7 +26,7 @@ export const test = async () => {
 
         await exec(data)
 
-        const trimmedResult = result.trim()
+        const trimmedResult = getInterceptResult().trim()
 
         if (assertion) {
           if (trimmedResult === assertion) {
@@ -47,7 +39,7 @@ export const test = async () => {
           }
         }
 
-        result = ''
+        clearInterceptResult()
       }
     }
 

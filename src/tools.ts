@@ -3,6 +3,17 @@ import { tokenize } from './tokenize'
 
 let tokens: string[]
 
+let interceptForTest = false
+let result = ''
+export const getInterceptResult = () => result
+export const clearInterceptResult = () => (result = '')
+export const getInterceptForTest = () => interceptForTest
+export const setInterceptForTest = (flag: boolean) => (interceptForTest = flag)
+export const printInterceptor = (msg?: any, ...optionalMsg: any[]) => {
+  result = result + [msg, ...optionalMsg].join(' ') + '\n'
+  return
+}
+
 export const enviroment = typeof window === 'undefined' ? 'node' : 'browser'
 
 export const err = (message: string) => {

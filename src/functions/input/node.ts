@@ -1,5 +1,5 @@
 import readline from 'readline'
-import { getInterceptForTest } from '../../test'
+import { getInterceptForTest } from '../../tools'
 
 export const inputForNode = (message?: string) =>
   new Promise((resolve) => {
