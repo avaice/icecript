@@ -7,16 +7,21 @@ let p: number = 0
 export const getPointer = () => p
 
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
-const reserved = ['true', 'false', 'monkey']
+const reserved = ['true', 'false', 'monkey', 'void']
 
 const breakSym = Symbol('break')
+
+type returnObjType = { sym: typeof breakSym; value: any }
 
 export const interpriter = async (tokens: string[]) => {
   vars = {}
   scopedVars = {}
   p = 0
 
-  const processTokens = async (options: { exprFlag?: boolean; scopedVariables: any }) => {
+  const processTokens = async (options: {
+    exprFlag?: boolean
+    scopedVariables: any
+  }): Promise<any> => {
     while (p < tokens.length) {
       const select = tokens[p]
 
@@ -116,10 +121,20 @@ export const interpriter = async (tokens: string[]) => {
 
       // ブレークコマンドか？
       if (select === 'return') {
-        return breakSym
+        if (tokens[p + 1] === 'void') {
+          return {
+            sym: breakSym,
+            value: undefined,
+          }
+        }
+        p++
+        return {
+          sym: breakSym,
+          value: await processTokens({ scopedVariables: options.scopedVariables }),
+        }
       }
 
-      if (![',', '(', ')', ';'].includes(select) && !select.startsWith('//')) {
+      if (![',', '(', ')', ';', 'void'].includes(select) && !select.startsWith('//')) {
         return err(`${select}は定義されていない命令です！`)
       }
 
@@ -232,15 +247,14 @@ export const interpriter = async (tokens: string[]) => {
       p++
     }
 
-    p++
     const from = p
     p = vars[fnName].pointer
-    await processor(true, scoped)
+    const result = await processor(true, scoped)
     p = from
-
     // 関数が終わる前にローカル変数を削除する
     delete scopedVars[sym]
-    return
+
+    return result?.value
   }
 
   const assignVar = async (scopedVariables: any) => {
@@ -295,36 +309,36 @@ export const interpriter = async (tokens: string[]) => {
   }: {
     current?: boolean
     scopedVariables: any
-  }): Promise<typeof breakSym | undefined> => {
+  }): Promise<{ sym: typeof breakSym } | undefined> => {
     p++
     const result = await processTokens({ scopedVariables })
     const judge = current ? false : result
     p++
-    const isBreaked = await processor(judge, scopedVariables)
+    const isReturned = await processor(judge, scopedVariables)
 
     if (tokens[p] === 'else') {
       p++
-      return await processor(current || isBreaked ? false : !judge, scopedVariables)
+      return await processor(current ? false : !judge, scopedVariables)
     } else if (tokens[p] === 'elif') {
-      return await ifFunc({ current: current || isBreaked ? true : judge, scopedVariables })
+      return await ifFunc({ current: current ? true : judge, scopedVariables })
     }
 
-    return isBreaked
+    return isReturned
   }
 
-  const whileFunc = async (scopedVariables: any): Promise<typeof breakSym | undefined> => {
+  const whileFunc = async (scopedVariables: any): Promise<returnObjType | undefined> => {
     const startPointer = p
     p++
     const result = await processTokens({ scopedVariables })
     const judge = !!result
     p++
-    const isBreaked = await processor(judge, scopedVariables)
+    const isReturned = await processor(judge, scopedVariables)
 
-    if (judge && !isBreaked) {
+    if (judge && !isReturned) {
       p = startPointer
       return await whileFunc({ scopedVariables })
     }
-    return isBreaked
+    return isReturned
   }
 
   const judge = async ({ leftArg, scopedVariables }: { leftArg?: any; scopedVariables: any }) => {
@@ -352,10 +366,10 @@ export const interpriter = async (tokens: string[]) => {
   //（process === falseだと処理しないでポインタだけ動かしてくれる）
   const processor = async (process: boolean, scopedVariables: any) => {
     let nest = 0
-    let breaked = undefined
+    let returned = undefined
 
     // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (p < tokens.length) {
       if (tokens[p] === '{') {
         nest++
       } else if (tokens[p] === '}') {
@@ -364,9 +378,10 @@ export const interpriter = async (tokens: string[]) => {
           break
         }
       } else {
-        if (process && !breaked) {
-          if ((await processTokens({ scopedVariables })) === breakSym) {
-            breaked = breakSym
+        if (process && !returned) {
+          const result = await processTokens({ scopedVariables })
+          if (result?.sym === breakSym) {
+            returned = result as returnObjType
           }
           // processTokens() の先ですでにポインタを動かしているので、
           // 下のp++と合わせると二重になってしまう
@@ -376,7 +391,7 @@ export const interpriter = async (tokens: string[]) => {
       p++
     }
     p++
-    return breaked
+    return returned
   }
 
   while (p < tokens.length) {

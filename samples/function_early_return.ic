@@ -1,9 +1,18 @@
+
 fn taroOnly(visitor){
     if(visitor != "taro"){
         print("この部屋は太郎くん専用です！")
-        return
+        return false
     }
     print("太郎の秘密の部屋だよ")
+    return true
 }
 
-taroOnly("hanako")
+
+if(taroOnly("hanako") ){
+    print("部屋に入ることができました")
+}else{
+    print("部屋に入れてもらえませんでした")
+}
+
+// var result = taroOnly("hanako")
