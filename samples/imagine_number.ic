@@ -1,0 +1,18 @@
+// NO_TEST
+
+var ans
+var imagine
+
+var exitFlag = false
+
+while(exitFlag == false){
+    ans = random(3) + 1
+    imagine = input("1-3のどーれ？")
+    if(ans == imagine){
+        print("あたり！")
+    }
+    else{
+        print("ハズレ。答えは" + ans +"。ゲームオーバー")
+        exitFlag = true
+    }
+}

@@ -14,6 +14,10 @@ export const test = async () => {
       if (path.extname(file) === '.ic') {
         const filePath = path.join(directoryPath, file)
         const data = fs.readFileSync(filePath, 'utf8')
+
+        if (data.startsWith('// NO_TEST' || '//NO_TEST')) {
+          continue
+        }
         const assertionPath = filePath + '.txt'
         const assertion = fs.existsSync(assertionPath)
           ? fs.readFileSync(assertionPath, 'utf8')
@@ -43,7 +47,7 @@ export const test = async () => {
       }
     }
 
-    console.log(`\x1b[32mすべてのテストに通過しました\x1b[0m\nEnd: ${new Date()}`)
+    console.log(`\x1b[32mすべてのテストを通過しました\x1b[0m\nEnd: ${new Date()}`)
   } catch (err) {
     console.error('Error:', err)
   }
