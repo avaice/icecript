@@ -36,6 +36,11 @@ export const interpriter = async (tokens: string[]) => {
         return await ifFunc()
       }
 
+      // Whileか？
+      // if (select === 'while') {
+      //   return await whileFunc()
+      // }
+
       // 予約語か？
       if (reserved.includes(select)) {
         switch (select) {
@@ -76,7 +81,7 @@ export const interpriter = async (tokens: string[]) => {
       }
 
       // 数字か？
-      if (select.match(/[0-9]?.?[0-9]/)) {
+      if (select.match(/^[0-9]?.?[0-9]/)) {
         return Number(select)
       }
 
@@ -101,7 +106,7 @@ export const interpriter = async (tokens: string[]) => {
         break
       }
       const arg = await processTokens()
-      if (arg) {
+      if (arg !== undefined) {
         args.push(arg)
       }
       p++
@@ -132,8 +137,8 @@ export const interpriter = async (tokens: string[]) => {
 
   const assignVar = async () => {
     p += 2
-
-    vars[tokens[p - 2]] = await processTokens()
+    const result = await processTokens()
+    vars[tokens[p - 2]] = result
     p++
   }
 
@@ -193,6 +198,36 @@ export const interpriter = async (tokens: string[]) => {
       await ifFunc(current ? true : judge)
     }
   }
+
+  // const whileFunc = async () => {
+  //   const processer = async (process: boolean) => {
+  //     let nest = 0
+  //     p += 2
+  //     while (nest >= 0) {
+  //       if (tokens[p] === '{') {
+  //         nest++
+  //       } else if (tokens[p] === '}') {
+  //         nest--
+  //       } else {
+  //         if (process) {
+  //           await processTokens()
+  //         }
+  //       }
+  //       p++
+  //     }
+  //   }
+  //   p++
+  //   const startPointer = p
+  //   const result = await processTokens()
+  //   const judge = result
+
+  //   await processer(judge)
+
+  //   if (judge) {
+  //     p = startPointer
+  //     whileFunc()
+  //   }
+  // }
 
   const judge = async (leftArg?: any) => {
     const ope = tokens[p + 1]
