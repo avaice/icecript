@@ -9,10 +9,8 @@ fn taroOnly(visitor){
 }
 
 
-if(taroOnly("hanako") ){
+if(taroOnly("hanako")){
     print("部屋に入ることができました")
 }else{
     print("部屋に入れてもらえませんでした")
 }
-
-// var result = taroOnly("hanako")
