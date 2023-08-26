@@ -1,0 +1,9 @@
+fn taroOnly(visitor){
+    if(visitor != "taro"){
+        print("この部屋は太郎くん専用です！")
+        return
+    }
+    print("太郎の秘密の部屋だよ")
+}
+
+taroOnly("hanako")
