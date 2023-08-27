@@ -134,7 +134,7 @@
       }
       const nativeConsoleLog = console.log
       console.log = (...messages) => {
-        nativeConsoleLog(messages)
+        // nativeConsoleLog(messages)
         let output = ''
         output = output + messages.join(' ') + '\n'
         window.result.value = output
