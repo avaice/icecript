@@ -120,7 +120,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
       }
 
       // ポインター移動バグのせいで必要
-      if (select === '}') {
+      if (select === '}' || select === ']') {
         return
       }
 
