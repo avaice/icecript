@@ -15,21 +15,21 @@
 
     <script type="text/icecript" src="pages/index.ic"></script>
     <script type="text/icecript" src="pages/notFoundPage.ic"></script>
+    <script type="text/icecript" src="pages/manualPage.ic"></script>
     <script type="text/icecript" src="pages/main.ic"></script>
     <script src="bundle.js"></script>
     <script>
       let iceScriptCode
       let entryPoint
-      const render = () => {
+
+      const render = (noPush) => {
         const urlParams = new URLSearchParams(window.location.search)
-        const id = urlParams.get('id')
+        let id = urlParams.get('id')
         const href = location.href
-        if (href.includes(entryPoint) && id) {
-          console.log('render')
-          icecript(iceScriptCode, id)
-        } else if (location.href === entryPoint) {
-          icecript(iceScriptCode)
+        if (!id) {
+          id = 'top'
         }
+        icecript(iceScriptCode, ['render', id, noPush])
       }
 
       document.addEventListener('DOMContentLoaded', async () => {
@@ -43,9 +43,11 @@
         }
 
         iceScriptCode = scriptArray.join('\n')
-        render()
+        render(true)
       })
-      window.addEventListener('popstate', render)
+      window.addEventListener('popstate', (e) => {
+        render(true)
+      })
     </script>
   </body>
 </html>

@@ -1,4 +1,4 @@
-fn index(push){
+fn index(){
     var html = `
     <h1>icecript はじめの一歩</h1>
     <p>icecriptを初めて使うユーザー向けのマニュアルです。</p>
@@ -15,14 +15,13 @@ fn index(push){
     <li>
         はじめてのicecript
         <ol>
-        <li><a href="">世界にあいさつしてみよう</a></li>
-        <li><a href="">自分だけの電卓を作ろう</a></li>
+        <li><a href="./index.html?id=first_01">世界にあいさつしてみよう</a></li>
+        <li><a href="./index.html?id=first_02">自分だけの電卓を作ろう</a></li>
         </ol>
     </li>
     </ol>
     `
-    if(push){
-        movePage("icecript はじめの一歩")
-    }
+
+    setTitle("icecript はじめの一歩")
     writeHtml("main", html)
 }

@@ -10,12 +10,16 @@ main {
   line-height: 1.8em;
 }
 
-.navigator {
+#navigator {
   display: flex;
   justify-content: space-between;
   width: 100%;
   max-width: 300px;
   margin: 40px auto;
+}
+
+h1 {
+  margin: 50px auto;
 }
 
 pre {

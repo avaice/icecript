@@ -33,7 +33,7 @@ export const err = (message: string) => {
   }
 }
 
-export const exec = async (src: string | undefined, flag?: string) => {
+export const exec = async (src: string | undefined, flag?: any) => {
   if (!src) {
     src = cache
   } else {
