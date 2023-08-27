@@ -1,16 +1,21 @@
-// NO_TEST
 var VARIABLE = "グローバル"
 
-fn a(msg){
+fn localvar(msg){
     var VARIABLE = "ローカル"
     print(msg)
     print(VARIABLE)
 }
 
+fn add(a, b){
+    return a+b
+}
+
 var select = 0
 
 if(select == 0){
-    a("おーい")
+    localvar("おーい")
 }
 
 print(VARIABLE)
+
+print(add(1, 2))

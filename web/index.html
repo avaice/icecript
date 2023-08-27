@@ -133,14 +133,16 @@
         }
       }
       const nativeConsoleLog = console.log
+      let output
       console.log = (...messages) => {
         // nativeConsoleLog(messages)
-        let output = ''
+
         output = output + messages.join(' ') + '\n'
         window.result.value = output
       }
       function run() {
         window.result.value = ''
+        output = ''
         icecript(editor.getValue())
       }
     </script>

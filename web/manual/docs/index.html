@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>命令一覧</title>
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      html {
+        background-color: rgb(230, 230, 230);
+      }
+      .command-item {
+        background-color: white;
+        /* box-shadow: 0 2px 10px gray; */
+        border-radius: 10px;
+        margin-top: 20px;
+        margin-left: 20px;
+        padding: 10px;
+      }
+      .command-item > h3 {
+        margin: 0;
+      }
+      pre {
+        white-space: pre-line;
+      }
+      section {
+        margin-top: 50px;
+      }
+      ul {
+        background-color: white;
+        border-radius: 10px;
+        margin-left: 20px;
+        padding: 10px 30px;
+        font-size: 18px;
+      }
+      .caution {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>icecript 命令一覧</h1>
+    <main>
+      <section>
+        <h2>目次</h2>
+        <div id="mokuji">
+          <ul>
+            <li><a href="#input_output">入出力</a></li>
+            <li><a href="#flow">制御フロー</a></li>
+            <li><a href="#var_const_reserved">変数・定数・予約語</a></li>
+            <li><a href="#process_string">文字列処理</a></li>
+            <li><a href="#matb">数学関数</a></li>
+          </ul>
+        </div>
+      </section>
+      <section id="input_output">
+        <h2>入出力</h2>
+        <hr />
+        <div class="command-item">
+          <h3>print(...string)</h3>
+          <p>引数に指定された文字列を出力する。</p>
+
+          <pre>
+              <code>
+                  print("Hello, World!")
+
+                  // Hello, World!
+              </code>
+            </pre>
+        </div>
+        <div class="command-item">
+          <h3>input(string)</h3>
+          <p>引数に指定された文字列を使ってユーザーに入力を促す。</p>
+          <pre>
+                <code>
+                    print("こんにちは！" +  input("お名前は？") )
+                    // （みさえと入力した場合）
+                    // こんにちは！みさえ
+                </code>
+              </pre>
+        </div>
+        <div class="command-item">
+          <h3>readFile(string)</h3>
+          <p>(今のところBrowser onlyですが、Nodeでも対応予定)</p>
+          <p>引数に指定されたファイルを読み込む。</p>
+          <pre>
+                <code>
+                  var text = readText("hello.txt")
+                  print(text)
+                </code>
+              </pre>
+        </div>
+      </section>
+
+      <section id="flow">
+        <h2>制御フロー</h2>
+        <hr />
+        <div class="command-item">
+          <h3>if</h3>
+          <p>条件式に基づいてコードを実行する。</p>
+          <pre>
+              <code>
+                if (x > 5) {
+                  print("x is greater than 5")
+                }
+                elif (x < 0) {
+                  print("x is less than 0")
+                }
+                else {
+                  print("x is 0-5 range")
+                }
+              </code>
+            </pre>
+        </div>
+        <div class="command-item">
+          <h3>while</h3>
+          <p>条件式が true の間、コードを繰り返し実行する。</p>
+          <pre>
+              <code>
+                while (x > 0) {
+                  print(x)
+                  x--
+                }
+              </code>
+            </pre>
+        </div>
+        <div class="command-item">
+          <h3>return</h3>
+          <p>関数から値を返す。</p>
+          <pre>
+              <code>
+                fn add(a, b) {
+                  return a + b
+                }
+              </code>
+            </pre>
+        </div>
+
+        <div class="command-item">
+          <h3>fn</h3>
+          <p>関数を定義する。</p>
+          <pre>
+              <code>
+                fn greet(name) {
+                  print("Hello, " + name + "!")
+                }
+              </code>
+            </pre>
+        </div>
+      </section>
+
+      <section id="var_const_reserved">
+        <h2>変数・定数・予約語</h2>
+        <hr />
+        <div class="command-item">
+          <h3>var</h3>
+          <p>変数を宣言する。</p>
+          <pre>
+            <code>
+              var x = 10;
+              var array = [1, 2, 3]
+
+              print(x) // 10
+              print(array[1]) // 2
+            </code>
+          </pre>
+        </div>
+        <div class="command-item">
+          <h3>monkey</h3>
+          <p>true:falseのどちらかを参照する。</p>
+          <pre>
+            <code>
+              print(monkey) // true or false
+            </code>
+          </pre>
+        </div>
+        <div class="command-item">
+          <h3>true</h3>
+          <p>肯定の意味合いを持つ定数。</p>
+        </div>
+        <div class="command-item">
+          <h3>false</h3>
+          <p>否定の意味合いを持つ定数。</p>
+        </div>
+        <div class="command-item">
+          <h3>void</h3>
+          <p>
+            何も返すものがない関数が返すべき定数。返す値のない関数でearly
+            returnするときは付けてください。
+          </p>
+        </div>
+        <div class="command-item">
+          <h3>flag (Browser only)</h3>
+          <p>JavaScriptから指定される、スクリプト実行時の引数。</p>
+        </div>
+      </section>
+
+      <section id="process_string">
+        <h2>文字列処理</h2>
+        <hr />
+        <div class="command-item">
+          <h3>parse(toType, value)</h3>
+          <p>文字列を解析してデータ型に変換する。</p>
+          <pre>
+            <code>
+              var numStr = "100"
+              // int, float, string, number
+              var num = parse("int", numStr)
+            </code>
+          </pre>
+        </div>
+
+        <!-- split -->
+        <div class="command-item">
+          <h3>split(text, splitter)</h3>
+          <p>文字列を指定の区切り文字で分割し、配列に格納する。</p>
+          <pre>
+            <code>
+              var fruits = split("apple,banana,orange", ",")
+              print(fruits[1]) // banana
+            </code>
+          </pre>
+        </div>
+      </section>
+
+      <section id="math">
+        <h2>数学関数</h2>
+        <hr />
+
+        <p class="caution">
+          特筆事項：icecriptは計算の演算子に"-"が存在しない。そのため、5-4をしたい場合は5+-4とする必要がある。
+        </p>
+
+        <div class="command-item">
+          <h3>random(number)</h3>
+          <p>0からnum - 1までの乱数を生成する。</p>
+          <pre>
+            <code>
+              var randomNumber = random(100)
+            </code>
+          </pre>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
