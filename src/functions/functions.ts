@@ -1,3 +1,4 @@
+import { parse } from './parse/parse'
 import { print } from './print'
 import { random } from './random'
 
@@ -5,4 +6,5 @@ import { random } from './random'
 export const functions = {
   print,
   random,
+  parse,
 }

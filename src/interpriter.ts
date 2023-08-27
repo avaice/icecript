@@ -1,5 +1,5 @@
 import { functions } from './functions/functions'
-import { err } from './tools'
+import { enviroment, err } from './tools'
 
 let vars: any = {}
 let scopedVars: any = {}
@@ -43,6 +43,9 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
 
       if (select === '(') {
         return await kakko(options.scopedVariables)
+      }
+      if (select === '[') {
+        return await array(options.scopedVariables)
       }
 
       // 条件分岐か？
@@ -97,13 +100,13 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
       // ローカル変数呼び出しか？
       if (options.scopedVariables) {
         if (Object.keys(options.scopedVariables).includes(tokens[p])) {
-          return options.scopedVariables[tokens[p]]
+          return await getVariable(true, options.scopedVariables)
         }
       }
 
       // 変数呼び出しか？
       if (Object.keys(vars).includes(tokens[p])) {
-        return vars[tokens[p]]
+        return await getVariable(false, options.scopedVariables)
       }
 
       // ただの文字か？
@@ -305,6 +308,36 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
       : result
   }
 
+  const array = async (scopedVariables: any) => {
+    const newArr = []
+    p++
+    while (tokens[p] !== ']') {
+      if (tokens[p] !== ',') {
+        const result: any = await processTokens({ scopedVariables })
+        newArr.push(result)
+      }
+      p++
+    }
+
+    return newArr
+  }
+
+  const getVariable = async (isLocalVar: boolean, scopedVariables: any) => {
+    const selectedVar = isLocalVar ? scopedVariables[tokens[p]] : vars[tokens[p]]
+    if (Array.isArray(selectedVar)) {
+      p += 2
+      const index = await processTokens({ scopedVariables })
+      if (isNaN(index)) {
+        console.log(typeof index)
+        err('配列のインデックスに数値ではないものが指定されました！' + index)
+      }
+      p++
+      return selectedVar[Number(index)]
+    } else {
+      return selectedVar
+    }
+  }
+
   const ifFunc = async ({
     current,
     scopedVariables,
@@ -399,5 +432,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
   while (p < tokens.length) {
     await processTokens({ scopedVariables: undefined })
   }
-  // console.log(vars)
+  if (enviroment === 'node') {
+    console.log(vars)
+  }
 }
