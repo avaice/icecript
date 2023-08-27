@@ -1,0 +1,28 @@
+fn index(push){
+    var html = `
+    <h1>icecript はじめの一歩</h1>
+    <p>icecriptを初めて使うユーザー向けのマニュアルです。</p>
+
+    <h2>目次</h2>
+    <ol>
+    <li>
+        icecriptの紹介
+        <ol>
+        <li><a href="./index.html?id=introduce_01">icecriptとは？</a></li>
+        <li><a href="./index.html?id=introduce_02">他の言語と何が違うの？</a></li>
+        </ol>
+    </li>
+    <li>
+        はじめてのicecript
+        <ol>
+        <li><a href="">世界にあいさつしてみよう</a></li>
+        <li><a href="">自分だけの電卓を作ろう</a></li>
+        </ol>
+    </li>
+    </ol>
+    `
+    if(push){
+        movePage("icecript はじめの一歩")
+    }
+    writeHtml("main", html)
+}

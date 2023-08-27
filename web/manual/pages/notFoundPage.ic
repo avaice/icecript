@@ -1,0 +1,9 @@
+fn notFoundPage(){
+    var html = `
+    <h1>ページが見つかりません</h1>
+    <p>指定されたURLは存在しないのだ</p>
+    `
+    movePage("404", "not_found")
+    writeHtml("main", html)
+
+}

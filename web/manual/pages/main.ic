@@ -1,0 +1,17 @@
+var f = flag // 呼び出しフラグ
+ print(f)
+
+// Top Page
+if(f == "initial"){
+    index(false)
+}
+elif(f == "top"){
+    index(true)
+}
+// ここから(1) icecriptの紹介
+elif(f == "introduce_01"){
+    manualPage(f)
+}
+else{
+    notFoundPage()
+}
