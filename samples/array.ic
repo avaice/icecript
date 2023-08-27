@@ -1,0 +1,3 @@
+var greatArray = ["おはよう", input("お昼の挨拶といえば？"), "こんばんは"]
+
+print(greatArray[1])

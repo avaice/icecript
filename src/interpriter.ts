@@ -1,5 +1,5 @@
 import { functions } from './functions/functions'
-import { err } from './tools'
+import { enviroment, err } from './tools'
 
 let vars: any = {}
 let scopedVars: any = {}
@@ -7,13 +7,13 @@ let p: number = 0
 export const getPointer = () => p
 
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
-const reserved = ['true', 'false', 'monkey', 'void']
+const reserved = ['true', 'false', 'monkey', 'void', 'flag']
 
 const breakSym = Symbol('break')
 
 type returnObjType = { sym: typeof breakSym; value: any }
 
-export const interpriter = async (tokens: string[]) => {
+export const interpriter = async (tokens: string[], flag: string = 'initial') => {
   vars = {}
   scopedVars = {}
   p = 0
@@ -44,6 +44,9 @@ export const interpriter = async (tokens: string[]) => {
       if (select === '(') {
         return await kakko(options.scopedVariables)
       }
+      if (select === '[') {
+        return await array(options.scopedVariables)
+      }
 
       // 条件分岐か？
       if (select === 'if') {
@@ -72,6 +75,8 @@ export const interpriter = async (tokens: string[]) => {
             return false
           case 'monkey':
             return Math.random() > 0.5 ? true : false
+          case 'flag':
+            return flag
           default:
             return err('System Error! 存在しない予約語')
         }
@@ -95,17 +100,17 @@ export const interpriter = async (tokens: string[]) => {
       // ローカル変数呼び出しか？
       if (options.scopedVariables) {
         if (Object.keys(options.scopedVariables).includes(tokens[p])) {
-          return options.scopedVariables[tokens[p]]
+          return await getVariable(true, options.scopedVariables)
         }
       }
 
       // 変数呼び出しか？
       if (Object.keys(vars).includes(tokens[p])) {
-        return vars[tokens[p]]
+        return await getVariable(false, options.scopedVariables)
       }
 
       // ただの文字か？
-      if (select.match(/".*"/)) {
+      if (select.match(/".*"/) || select.match(/`([^`]+)`/)) {
         return select.slice(1, select.length - 1)
       }
 
@@ -115,7 +120,7 @@ export const interpriter = async (tokens: string[]) => {
       }
 
       // ポインター移動バグのせいで必要
-      if (select === '}') {
+      if (select === '}' || select === ']') {
         return
       }
 
@@ -303,6 +308,43 @@ export const interpriter = async (tokens: string[]) => {
       : result
   }
 
+  const array = async (scopedVariables: any) => {
+    const newArr = []
+    p++
+    while (tokens[p] !== ']') {
+      if (tokens[p] !== ',') {
+        const result: any = await processTokens({ scopedVariables })
+        newArr.push(result)
+      }
+      p++
+    }
+
+    return newArr
+  }
+
+  const getVariable = async (isLocalVar: boolean, scopedVariables: any) => {
+    const selectedVar = isLocalVar ? scopedVariables[tokens[p]] : vars[tokens[p]]
+    if (Array.isArray(selectedVar) && tokens[p + 1] === '[') {
+      p += 2
+      const index = await processTokens({ scopedVariables })
+      if (isNaN(index)) {
+        console.log(typeof index)
+        err('配列のインデックスに数値ではないものが指定されました！' + index)
+      }
+      p++
+
+      const result = selectedVar[Number(index)]
+
+      return ['+', '*', '/'].includes(tokens[p + 1])
+        ? await arithmetic({ leftArg: result, scopedVariables })
+        : judgeOpe.includes(tokens[p + 1])
+        ? await judge({ leftArg: result, scopedVariables })
+        : result
+    } else {
+      return selectedVar
+    }
+  }
+
   const ifFunc = async ({
     current,
     scopedVariables,
@@ -397,5 +439,7 @@ export const interpriter = async (tokens: string[]) => {
   while (p < tokens.length) {
     await processTokens({ scopedVariables: undefined })
   }
-  // console.log(vars)
+  if (enviroment === 'node') {
+    console.log(vars)
+  }
 }

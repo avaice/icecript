@@ -4,34 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="style.css" />
-    <title>icecript はじめの一歩</title>
+    <title>icecript spa page</title>
   </head>
   <body>
-    <main>
-      <h1>icecript はじめの一歩</h1>
-      <p>icecriptを初めて使うユーザー向けのマニュアルです。</p>
-
-      <h2>目次</h2>
-      <ol>
-        <li>
-          icecriptの紹介
-          <ol>
-            <li><a href="introduce/01.html">icecriptとは？</a></li>
-            <li><a href="introduce/02.html">他の言語と何が違うの？</a></li>
-          </ol>
-        </li>
-        <li>
-          はじめてのicecript
-          <ol>
-            <li><a href="first-icecript/01.html">世界にあいさつしてみよう</a></li>
-            <li><a href="first-icecript/02.html">自分だけの電卓を作ろう</a></li>
-          </ol>
-        </li>
-      </ol>
-    </main>
+    <main></main>
 
     <footer>
       <p>(C) 2023 avaice</p>
     </footer>
+
+    <script type="text/icecript" src="pages/index.ic"></script>
+    <script type="text/icecript" src="pages/notFoundPage.ic"></script>
+    <script type="text/icecript" src="pages/manualPage.ic"></script>
+    <script type="text/icecript" src="pages/main.ic"></script>
+    <script src="bundle.js"></script>
+    <script>
+      let iceScriptCode
+      let entryPoint
+
+      const render = (noPush) => {
+        const urlParams = new URLSearchParams(window.location.search)
+        let id = urlParams.get('id')
+        const href = location.href
+        if (!id) {
+          id = 'top'
+        }
+        icecript(iceScriptCode, ['render', id, noPush])
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        entryPoint = location.href
+        const scriptArray = []
+        const iceScriptElement = document.querySelectorAll('script[type="text/icecript"]')
+
+        for (let i = 0; i < iceScriptElement.length; i++) {
+          const src = await fetch(iceScriptElement[i].src).then((v) => v.text())
+          scriptArray.push(src)
+        }
+
+        iceScriptCode = scriptArray.join('\n')
+        render(true)
+      })
+      window.addEventListener('popstate', (e) => {
+        render(true)
+      })
+    </script>
   </body>
 </html>

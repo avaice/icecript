@@ -1,0 +1,28 @@
+var f = flag // 呼び出しフラグ
+
+var command = f[0]
+var id = f[1]
+var manualSection = split(id , "_")
+// print(f)
+
+if(command == "render"){
+    // Top Page
+    if(id == "" || id == "top"){
+        index()
+    }
+    // ここから(1) icecriptの紹介
+    elif(manualSection[0] == "introduce"){
+        manualPage(f[1])
+    }
+    // ここから(1) icecriptの紹介
+    elif(manualSection[0] == "first"){
+        manualPage(f[1])
+    }
+    else{
+        notFoundPage()
+    }
+
+    if(f[2] == false){
+        movePage(f[1])
+    }
+}

@@ -1,0 +1,22 @@
+var topPage= `
+<h1>SPA written by icecript</h1>
+<button id="goAbout">go to about</button>
+<p>Top Page!</p>
+<p>今日はとてもいい天気だから、ひまわりの種を炒った。</p>
+`
+var aboutPage= `
+<h1>SPA written by icecript</h1>
+<button id="goTop">go to top</button>
+<p>About Page!</p>
+<p>icecriptはとてもいい言語だ。</p>
+`
+var f = flag
+
+if(f == "initial" || f == "href:top"){
+    writeHtml("main", topPage)
+    listenWebEvent("#goAbout", "click", "href:about")
+}
+if(f == "href:about"){
+    writeHtml("main", aboutPage)
+    listenWebEvent("#goTop", "click", "href:top")
+}

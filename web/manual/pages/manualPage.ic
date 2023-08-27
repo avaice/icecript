@@ -1,0 +1,8 @@
+fn manualPage(id){
+    var html = readText("./html/" + id + ".html")
+
+    writeHtml("main", html)
+    setTitle()
+
+
+}

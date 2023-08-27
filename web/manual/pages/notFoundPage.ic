@@ -1,0 +1,9 @@
+fn notFoundPage(){
+    var html = `
+    <h1>ページが見つかりません</h1>
+    <p>指定されたURLは存在しないのだ</p>
+    `
+    setTitle("そんなページは、ない")
+    writeHtml("main", html)
+
+}
