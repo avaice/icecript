@@ -324,7 +324,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
 
   const getVariable = async (isLocalVar: boolean, scopedVariables: any) => {
     const selectedVar = isLocalVar ? scopedVariables[tokens[p]] : vars[tokens[p]]
-    if (Array.isArray(selectedVar)) {
+    if (Array.isArray(selectedVar) && tokens[p + 1] === '[') {
       p += 2
       const index = await processTokens({ scopedVariables })
       if (isNaN(index)) {
@@ -332,7 +332,14 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
         err('配列のインデックスに数値ではないものが指定されました！' + index)
       }
       p++
-      return selectedVar[Number(index)]
+
+      const result = selectedVar[Number(index)]
+
+      return ['+', '*', '/'].includes(tokens[p + 1])
+        ? await arithmetic({ leftArg: result, scopedVariables })
+        : judgeOpe.includes(tokens[p + 1])
+        ? await judge({ leftArg: result, scopedVariables })
+        : result
     } else {
       return selectedVar
     }
