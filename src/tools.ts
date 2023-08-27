@@ -1,6 +1,8 @@
 import { getPointer, interpriter } from './interpriter'
 import { tokenize } from './tokenize'
 
+let cache = ''
+
 let tokens: string[]
 
 let interceptForTest = false
@@ -31,7 +33,12 @@ export const err = (message: string) => {
   }
 }
 
-export const exec = async (src: string) => {
+export const exec = async (src: string | undefined, flag?: string) => {
+  if (!src) {
+    src = cache
+  } else {
+    cache = src
+  }
   tokens = tokenize(src)
 
   // console.log(tokens)
@@ -40,5 +47,5 @@ export const exec = async (src: string) => {
   //   console.log(i, v)
   // })
 
-  await interpriter(tokens)
+  await interpriter(tokens, flag)
 }

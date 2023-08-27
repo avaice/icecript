@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPA written by icecript</title>
+  </head>
+  <body>
+    <main></main>
+
+    <script type="text/icecript" src="main.ic"></script>
+    <script src="bundle.js"></script>
+    <script>
+      window.onload = async () => {
+        const iceScriptElement = document.querySelector('script[type="text/icecript"]')
+        const src = await fetch(iceScriptElement.src).then((v) => v.text())
+        const iceScriptCode = src
+        icecript(iceScriptCode)
+      }
+    </script>
+  </body>
+</html>

@@ -7,13 +7,13 @@ let p: number = 0
 export const getPointer = () => p
 
 const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
-const reserved = ['true', 'false', 'monkey', 'void']
+const reserved = ['true', 'false', 'monkey', 'void', 'flag']
 
 const breakSym = Symbol('break')
 
 type returnObjType = { sym: typeof breakSym; value: any }
 
-export const interpriter = async (tokens: string[]) => {
+export const interpriter = async (tokens: string[], flag: string = 'initial') => {
   vars = {}
   scopedVars = {}
   p = 0
@@ -72,6 +72,8 @@ export const interpriter = async (tokens: string[]) => {
             return false
           case 'monkey':
             return Math.random() > 0.5 ? true : false
+          case 'flag':
+            return flag
           default:
             return err('System Error! 存在しない予約語')
         }
