@@ -6,6 +6,6 @@ export const listenWebEvent = (selector: string, event: string, flag: string) =>
     return false
   }
   return dom.addEventListener(event, () => {
-    exec(undefined, flag)
+    exec(undefined, ['event', flag])
   })
 }

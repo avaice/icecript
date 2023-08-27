@@ -1,4 +1,4 @@
-export const movePage = (title: string, id?: string) => {
+export const movePage = (id?: string) => {
   if (id && !id.match(/^[a-zA-Z0-9_]+$/)) {
     return false
   }
@@ -10,5 +10,4 @@ export const movePage = (title: string, id?: string) => {
   }
   const paramString = id ? `?${searchParams.toString()}` : ''
   history.pushState(null, '', paramString)
-  document.title = title
 }
