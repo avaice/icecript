@@ -4,6 +4,8 @@ fn index(){
     <p>icecriptを初めて使うユーザー向けのマニュアルです。</p>
 
     <p>手っ取り早く機能の一覧を確認したい方は、<a href="docs/">機能一覧</a>をご覧ください。<p>
+    <p>実装が気になる方は、<a href="https://github.com/avaice/icecript">GitHub</a>をご覧ください。<p>
+    <p>サンプルプログラムは<a href="https://github.com/avaice/icecript/tree/main/samples">GitHub</a>にあります。<p>
 
     <h2>目次</h2>
     <ol>
