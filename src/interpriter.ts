@@ -6,7 +6,7 @@ let scopedVars: any = {}
 let p: number = 0
 export const getPointer = () => p
 
-const judgeOpe = ['==', '&&', '>', '<', '!=', '||']
+const judgeOpe = ['==', '&&', '>', '<', '>=', '<=', '!=', '||']
 const reserved = ['true', 'false', 'monkey', 'void', 'flag']
 
 const breakSym = Symbol('break')
@@ -399,6 +399,10 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
         return left < right
       case '>':
         return left > right
+      case '<=':
+        return left <= right
+      case '>=':
+        return left >= right
       case '!=':
         return left != right
     }
