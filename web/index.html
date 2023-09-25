@@ -21,7 +21,8 @@
         width: 100%;
       }
       button,
-      #help {
+      #help,
+      #share {
         text-align: center;
         cursor: pointer;
         background-color: rgb(230, 230, 230);
@@ -69,11 +70,15 @@
         height: 40px;
         width: 70px;
       }
-      #help {
+      #help,
+      #share {
         display: inline-block;
         line-height: 40px;
         width: 40px;
         height: 40px;
+      }
+      #share {
+        width: 70px;
       }
 
       main {
@@ -99,8 +104,8 @@
         <h1>playground</h1>
         <div class="controls">
           <button onclick="run()">Run</button>
-          <button disabled>Share</button>
-          <a href="manual/index.html" id="help" target="_blank" noreferer>?</a>
+          <a href="https://cho-ice.xyz/icecript-playground/" id="share" target="_blank">Share</a>
+          <a href="manual/index.html" id="help" target="_blank">?</a>
         </div>
       </div>
     </header>
@@ -131,6 +136,15 @@
         if (!icecript) {
           alert('icecriptのロードに失敗しました！\n~/dist/bundle.jsは存在しますか？')
         }
+        const id = new URLSearchParams(window.location.search).get('id')
+        if (id) {
+          fetch('https://cho-ice.xyz/icecript-playground/api/get-src.php?id=' + id)
+            .then((v) => {
+              if (v.status === 200) return v.text()
+              else throw new Error('fetch error')
+            })
+            .then((text) => editor.setValue(text))
+        }
       }
       const nativeConsoleLog = console.log
       let output
@@ -143,7 +157,7 @@
       function run() {
         window.result.value = ''
         output = ''
-        icecript(editor.getValue())
+        icecript(editor.getValue(), null, true)
       }
     </script>
   </body>
