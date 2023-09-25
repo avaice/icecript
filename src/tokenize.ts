@@ -1,5 +1,5 @@
 export const tokenize = (src: string) => {
-  const operators = /==|&&|\|\||!=|[<>+*/=()]/
+  const operators = /==|&&|\|\||!=|<=|>=|[<>+*/=()]/
   const separators = /`[^`]+`|""|".[^"]*"| |\n|;|\/\/.*|{|}|\[|\]|,/
 
   const tokens = src
@@ -9,7 +9,7 @@ export const tokenize = (src: string) => {
 
   const kakko = { start: ['(', '['], end: [')', ']'] }
   for (let i = 0; i < tokens.length; i++) {
-    if (['*', '/', '==', '!=', '<', '>'].includes(tokens[i])) {
+    if (['*', '/', '==', '!=', '<', '>', '>=', '<='].includes(tokens[i])) {
       if (!kakko.end.includes(tokens[i - 1])) {
         tokens.splice(i - 1, 0, '(')
       } else {
