@@ -88,7 +88,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
       }
 
       // 四則演算か？
-      if (!options?.exprFlag && ['+', '*', '/'].includes(tokens[p + 1])) {
+      if (!options?.exprFlag && ['+', '*', '/', '%'].includes(tokens[p + 1])) {
         return await arithmetic({ scopedVariables: options.scopedVariables })
       }
 
@@ -170,7 +170,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
       err(`関数の終わりに ")" がありません`)
     }
     const result = await (functions[fnStr] as any)(...args)
-    return ['+', '*', '/'].includes(tokens[p + 1])
+    return ['+', '*', '/', '%'].includes(tokens[p + 1])
       ? await arithmetic({ leftArg: result, scopedVariables })
       : judgeOpe.includes(tokens[p + 1])
       ? await judge({ leftArg: result, scopedVariables })
@@ -294,6 +294,8 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
         return left * right
       case '/':
         return left / right
+      case '%':
+        return left % right
     }
   }
 
@@ -301,7 +303,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
     p++
     const result: any = await processTokens({ scopedVariables })
     p++
-    return ['+', '*', '/'].includes(tokens[p + 1])
+    return ['+', '*', '/', '%'].includes(tokens[p + 1])
       ? await arithmetic({ leftArg: result, scopedVariables })
       : judgeOpe.includes(tokens[p + 1])
       ? await judge({ leftArg: result, scopedVariables })
@@ -335,7 +337,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
 
       const result = selectedVar[Number(index)]
 
-      return ['+', '*', '/'].includes(tokens[p + 1])
+      return ['+', '*', '/', '%'].includes(tokens[p + 1])
         ? await arithmetic({ leftArg: result, scopedVariables })
         : judgeOpe.includes(tokens[p + 1])
         ? await judge({ leftArg: result, scopedVariables })
