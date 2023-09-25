@@ -1,0 +1,19 @@
+var nums = [10, 30, 50]
+
+fn calcTotal(x){
+    var i = 0
+    var total = 0
+    while(i <= x ){
+        total = total + i
+        i = i + 1
+    }
+    return total
+}
+
+var x
+var i = 0
+while(i < 3){
+    x = parse("int", nums[i])
+    print(calcTotal(x))
+    i = i + 1
+}
