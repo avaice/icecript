@@ -63,7 +63,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
 
       // Whileか？
       if (select === 'while') {
-        return await whileFunc({ scopedVariables: options.scopedVariables })
+        return await whileFunc(options.scopedVariables)
       }
 
       // 予約語か？
@@ -378,7 +378,7 @@ export const interpriter = async (tokens: string[], flag: string = 'initial') =>
 
     if (judge && !isReturned) {
       p = startPointer
-      return await whileFunc({ scopedVariables })
+      return await whileFunc(scopedVariables)
     }
     return isReturned
   }
