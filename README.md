@@ -17,3 +17,8 @@ https://avaice.github.io/icecript
 `npm ci`
 
 `npm start ./samples/helloWorld.ic`
+
+### Code Syntax Hightlight
+
+VS Code では、コードシンタックスのハイライトを行うことができます。
+https://marketplace.visualstudio.com/items?itemName=avaice.icecript-syntax
