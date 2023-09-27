@@ -1,4 +1,4 @@
-ace.define("ace/mode/icecript_highlight_rules",[], function(require, exports, module){/* ***** BEGIN LICENSE BLOCK *****
+define("ace/mode/icecript_highlight_rules",["require","exports","module","ace/lib/oop","ace/mode/text_highlight_rules"], function(require, exports, module){/* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
  *
  * Copyright (c) 2012, Ajax.org B.V.
@@ -33,19 +33,23 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var IcecriptHighlightRules = function () {
     this.$rules = {
         start: [{
+                include: "#strings"
+            }, {
+                include: "#mlstrings"
+            }, {
                 include: "#comment"
             }, {
                 include: "#reserved"
             }, {
                 include: "#var_label"
             }, {
+                include: "#fn"
+            }, {
                 include: "#keywords"
             }, {
                 include: "#functions"
             }, {
                 include: "#vars"
-            }, {
-                include: "#strings"
             }, {
                 include: "#number"
             }],
@@ -57,13 +61,17 @@ var IcecriptHighlightRules = function () {
                 token: "storage.type.icecript",
                 regex: /\bvar\b/
             }],
+        "#fn": [{
+                token: "storage.type.function.icecript",
+                regex: /\bfn\b/
+            }],
         "#keywords": [{
                 token: "keyword.control.icecript",
-                regex: /\b(?:if|else|elif)\b/
+                regex: /\b(?:if|else|elif|return)\b/
             }],
         "#reserved": [{
                 token: "variable.other.constant",
-                regex: /\b(?:true|false|monkey)\b/
+                regex: /\b(?:true|false|monkey|void)\b/
             }],
         "#functions": [{
                 token: "entity.name.function",
@@ -72,6 +80,8 @@ var IcecriptHighlightRules = function () {
                         token: "text",
                         regex: /\)/,
                         next: "pop"
+                    }, {
+                        include: "#mlstrings"
                     }, {
                         include: "#strings"
                     }, {
@@ -103,6 +113,20 @@ var IcecriptHighlightRules = function () {
                     }, {
                         defaultToken: "string.quoted.double.icecript"
                     }]
+            }],
+        "#mlstrings": [{
+                token: "string.quoted.multi.icecript",
+                regex: /`/,
+                push: [{
+                        token: "string.quoted.multi.icecript",
+                        regex: /`/,
+                        next: "pop"
+                    }, {
+                        token: "constant.character.escape.icecript",
+                        regex: /\\./
+                    }, {
+                        defaultToken: "string.quoted.multi.icecript"
+                    }]
             }]
     };
     this.normalizeRules();
@@ -117,7 +141,7 @@ exports.IcecriptHighlightRules = IcecriptHighlightRules;
 
 });
 
-ace.define("ace/mode/folding/cstyle",[], function(require, exports, module){"use strict";
+define("ace/mode/folding/cstyle",["require","exports","module","ace/lib/oop","ace/range","ace/mode/folding/fold_mode"], function(require, exports, module){"use strict";
 var oop = require("../../lib/oop");
 var Range = require("../../range").Range;
 var BaseFoldMode = require("./fold_mode").FoldMode;
@@ -233,7 +257,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 });
 
-ace.define("ace/mode/icecript",[], function(require, exports, module){/* ***** BEGIN LICENSE BLOCK *****
+define("ace/mode/icecript",["require","exports","module","ace/lib/oop","ace/mode/text","ace/mode/icecript_highlight_rules","ace/mode/folding/cstyle"], function(require, exports, module){/* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
  *
  * Copyright (c) 2012, Ajax.org B.V.
@@ -278,7 +302,7 @@ oop.inherits(Mode, TextMode);
 exports.Mode = Mode;
 
 });                (function() {
-                    ace.require(["ace/mode/icecript"], function(m) {
+                    window.require(["ace/mode/icecript"], function(m) {
                         if (typeof module == "object" && typeof exports == "object" && module) {
                             module.exports = m;
                         }
