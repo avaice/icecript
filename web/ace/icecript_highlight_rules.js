@@ -45,19 +45,23 @@ var IcecriptHighlightRules = function() {
 
     this.$rules = {
         start: [{
+            include: "#strings"
+        }, {
+            include: "#mlstrings"
+        }, {
             include: "#comment"
         }, {
             include: "#reserved"
         }, {
             include: "#var_label"
         }, {
+            include: "#fn"
+        }, {
             include: "#keywords"
         }, {
             include: "#functions"
         }, {
             include: "#vars"
-        }, {
-            include: "#strings"
         }, {
             include: "#number"
         }],
@@ -69,13 +73,17 @@ var IcecriptHighlightRules = function() {
             token: "storage.type.icecript",
             regex: /\bvar\b/
         }],
+        "#fn": [{
+            token: "storage.type.function.icecript",
+            regex: /\bfn\b/
+        }],
         "#keywords": [{
             token: "keyword.control.icecript",
-            regex: /\b(?:if|else|elif)\b/
+            regex: /\b(?:if|else|elif|return)\b/
         }],
         "#reserved": [{
             token: "variable.other.constant",
-            regex: /\b(?:true|false|monkey)\b/
+            regex: /\b(?:true|false|monkey|void)\b/
         }],
         "#functions": [{
             token: "entity.name.function",
@@ -84,6 +92,8 @@ var IcecriptHighlightRules = function() {
                 token: "text",
                 regex: /\)/,
                 next: "pop"
+            }, {
+                include: "#mlstrings"
             }, {
                 include: "#strings"
             }, {
@@ -114,6 +124,20 @@ var IcecriptHighlightRules = function() {
                 regex: /\\./
             }, {
                 defaultToken: "string.quoted.double.icecript"
+            }]
+        }],
+        "#mlstrings": [{
+            token: "string.quoted.multi.icecript",
+            regex: /`/,
+            push: [{
+                token: "string.quoted.multi.icecript",
+                regex: /`/,
+                next: "pop"
+            }, {
+                token: "constant.character.escape.icecript",
+                regex: /\\./
+            }, {
+                defaultToken: "string.quoted.multi.icecript"
             }]
         }]
     }
