@@ -4,9 +4,11 @@ var teamMembersCount = parse("int", input(teamName + "の所属人数を教え�
 
 var i = 1
 
+var inputResult
+var age
 while(i <= teamMembersCount){
-    var inputResult = input(i + "人目の年齢を教えてください")
-    var age = parse("int", inputResult)
+    inputResult = input(i + "人目の年齢を教えてください")
+    age = parse("int", inputResult)
     if(age > max){
         max = age
     }

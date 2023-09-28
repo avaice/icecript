@@ -1,15 +1,13 @@
 import readline from 'readline'
-import { getInterceptForTest } from '../../tools'
+
+export const inputInterceptor: string[] = []
 
 export const inputForNode = (message?: string) =>
   new Promise((resolve) => {
     const question = message + ': ' ?? ''
 
-    if (getInterceptForTest()) {
-      const placeHolder = 'test'
-      // console.log(question + placeHolder)
-      resolve(placeHolder)
-      return
+    if (inputInterceptor.length > 0) {
+      return resolve(inputInterceptor.shift())
     }
 
     const rl = readline.createInterface({
