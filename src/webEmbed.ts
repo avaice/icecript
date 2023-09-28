@@ -7,11 +7,11 @@ import { writeHtml } from './functions/libDom/writeHtml'
 import { readTextForBrowser } from './functions/readText/browser'
 import { exec } from './tools'
 
-const setBrowserFunctions = (noDomFunctions?: boolean) => {
+const setBrowserFunctions = (useDomFunctions?: boolean) => {
   // Browser実装依存のfunctions
   ;(functions as any)['input'] = inputForBrowser
   ;(functions as any)['readText'] = readTextForBrowser
-  if (!noDomFunctions) {
+  if (useDomFunctions) {
     ;(functions as any)['writeHtml'] = writeHtml
     ;(functions as any)['movePage'] = movePage
     ;(functions as any)['setTitle'] = setTitle
@@ -20,7 +20,15 @@ const setBrowserFunctions = (noDomFunctions?: boolean) => {
 }
 
 //exec
-;(window as any).icecript = (src: string, flag?: any, noDomFunctions?: boolean) => {
-  setBrowserFunctions(noDomFunctions)
+;(window as any).icecript = ({
+  src,
+  flag,
+  useDomFunctions,
+}: {
+  src: string
+  flag?: any
+  useDomFunctions?: boolean
+}) => {
+  setBrowserFunctions(useDomFunctions)
   exec(src, flag)
 }

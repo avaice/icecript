@@ -161,7 +161,7 @@
       function run() {
         window.result.value = ''
         output = ''
-        icecript(editor.getValue(), null, true)
+        icecript({ src: editor.getValue(), useDomFunctions: false })
       }
     </script>
   </body>
