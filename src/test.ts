@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { clearInterceptResult, exec, getInterceptResult, setInterceptForTest } from './tools'
+import { inputInterceptor } from './functions/input/node'
 
 export const test = async () => {
   // 出力を迎撃する
@@ -18,7 +19,17 @@ export const test = async () => {
         if (data.startsWith('// NO_TEST' || '//NO_TEST')) {
           continue
         }
-        const assertionPath = filePath + '.txt'
+
+        inputInterceptor.length = 0
+        const inputInterceptPath = filePath + '.input.txt'
+        const inputIntercept = fs.existsSync(inputInterceptPath)
+          ? fs.readFileSync(inputInterceptPath, 'utf8')
+          : null
+        if (inputIntercept) {
+          inputInterceptor.push(...inputIntercept.split('\n'))
+        }
+
+        const assertionPath = filePath + '.output.txt'
         const assertion = fs.existsSync(assertionPath)
           ? fs.readFileSync(assertionPath, 'utf8')
           : null

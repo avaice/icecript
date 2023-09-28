@@ -8,7 +8,7 @@ const render = (noPush) => {
     if (!id) {
         id = 'top'
     }
-    icecript(iceScriptCode, ['render', id, noPush])
+    icecript({ src: iceScriptCode, flag: ['render', id, noPush], useDomFunctions: true })
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
