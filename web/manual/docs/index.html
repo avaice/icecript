@@ -49,7 +49,8 @@
             <li><a href="#flow">制御フロー</a></li>
             <li><a href="#var_const_reserved">変数・定数・予約語</a></li>
             <li><a href="#process_string">文字列処理</a></li>
-            <li><a href="#matb">数学関数</a></li>
+            <li><a href="#math">数学関数</a></li>
+            <li><a href="#dom">DOM操作系</a></li>
           </ul>
         </div>
       </section>
@@ -237,6 +238,55 @@
           <pre>
             <code>
               var randomNumber = random(100)
+            </code>
+          </pre>
+        </div>
+      </section>
+
+      <section id="dom">
+        <h2>DOM操作系</h2>
+        <hr />
+
+        <p class="caution">
+          特筆事項：icecript実行関数の第３引数（useDomFunctions）をtrueにするとDOM操作系関数が無効になります。
+        </p>
+
+        <div class="command-item">
+          <h3>writeHtml(selector: string, html: string)</h3>
+          <p>指定したセレクタにHTMLを書き込む。</p>
+          <pre>
+            <code>
+              writeHtml(&quot;main&quot;, &quot;&lt;p&gt;こんにちは&lt;/p&gt;&quot;)
+            </code>
+          </pre>
+        </div>
+        <div class="command-item">
+          <h3>movePage(id: string)</h3>
+          <p>idに示すクエリパラメータのページへ遷移したことをブラウザに伝える。</p>
+          <pre>
+            <code>
+              movePage(&quot;main&quot;)
+            </code>
+          </pre>
+        </div>
+        <div class="command-item">
+          <h3>setTitle(title: string)</h3>
+          <p>titleをドキュメントのタイトルに設定する。</p>
+          <pre>
+            <code>
+              setTitle(&quot;Home&quot;)
+            </code>
+          </pre>
+        </div>
+        <div class="command-item">
+          <h3>listenWebEvent(selector: string, event: string, flag: string)</h3>
+          <p>
+            selectorで指定された要素で、指定されたeventが発生したときに指定したflagをつけてicecriptを呼び出す。<br />
+            <a href="https://developer.mozilla.org/ja/docs/Web/Events">イベントの一覧</a>
+          </p>
+          <pre>
+            <code>
+              listenWebEvent("#goTop", "click", "href:top")
             </code>
           </pre>
         </div>
