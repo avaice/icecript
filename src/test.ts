@@ -18,7 +18,7 @@ export const test = async () => {
         if (data.startsWith('// NO_TEST' || '//NO_TEST')) {
           continue
         }
-        const assertionPath = filePath + '.txt'
+        const assertionPath = filePath + '.output.txt'
         const assertion = fs.existsSync(assertionPath)
           ? fs.readFileSync(assertionPath, 'utf8')
           : null

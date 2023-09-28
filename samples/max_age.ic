@@ -1,0 +1,16 @@
+var max = 0
+var teamName = input("チームの名前を教えてください")
+var teamMembersCount = parse("int", input(teamName + "の所属人数を教えてください"))
+
+var i = 1
+
+while(i <= teamMembersCount){
+    var inputResult = input(i + "人目の年齢を教えてください")
+    var age = parse("int", inputResult)
+    if(age > max){
+        max = age
+    }
+    i = i + 1
+}
+
+print(teamName + "の最高齢メンバーは" + max + "歳です")
