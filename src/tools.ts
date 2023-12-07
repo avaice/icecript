@@ -20,11 +20,11 @@ export const enviroment = typeof window === 'undefined' ? 'node' : 'browser'
 
 export const err = (message: string) => {
   const p = getPointer()
-  const pos = tokens.slice(Math.max(0, p - 5), p + 5).join(' ')
+  const pos = tokens ? tokens.slice(Math.max(0, p - 5), p + 5).join(' ') : undefined
   if (enviroment === 'browser') {
     alert(
       `Error: ${p}
-      該当コード近辺: ${pos}
+      該当コード近辺: ${pos ?? ''}
       ${message}`
     )
     throw new Error(message)
